@@ -142,7 +142,7 @@ const TradeHistory = () => {
                           : "bg-secondary text-muted-foreground"
                       }`}
                     >
-                      {t.side === "buy" ? "매수" : t.side === "sell" ? "매도" : "관망"}
+                      {t.side === "buy" ? "Buy" : t.side === "sell" ? "Sell" : "Hold"}
                     </span>
                     {t.status && t.status !== "hold" && (
                       <span className="text-[10px] text-muted-foreground">{t.status}</span>
