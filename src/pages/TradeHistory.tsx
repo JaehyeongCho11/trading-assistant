@@ -101,7 +101,7 @@ const TradeHistory = () => {
         <div className="space-y-2 pb-4">
           {trades.length === 0 && !loading && (
             <div className="text-center py-12 text-muted-foreground text-sm">
-              거래 내역이 없습니다
+              No trade history yet
             </div>
           )}
           {trades.map((t) => (
