@@ -1,0 +1,158 @@
+{
+  "meta": {
+    "purpose": "infer_latent_trading_traits",
+    "instruction": "No single answer is decisive. Answers are aggregated into latent traits."
+  },
+  "sections": [
+    {
+      "id": "financial_flexibility",
+      "questions": [
+        {
+          "id": "Q1",
+          "text": "If an unexpected life event occurred, how long could you cover expenses without using this account?",
+          "options": ["< 1 month", "1–3 months", "3–6 months", "> 6 months"]
+        },
+        {
+          "id": "Q2",
+          "text": "How predictable is your primary income over the next few years?",
+          "options": ["Very unpredictable", "Somewhat unpredictable", "Mostly predictable", "Very stable"]
+        },
+        {
+          "id": "Q3",
+          "text": "When do you expect to use money from this account in a meaningful way?",
+          "options": ["Within 1 year", "1–3 years", "3–10 years", "No specific plan"]
+        }
+      ]
+    },
+    {
+      "id": "volatility_and_drawdowns",
+      "questions": [
+        {
+          "id": "Q4",
+          "text": "If this account dropped about 20% over several months, which reaction fits you best?",
+          "options": ["Reduce exposure quickly", "Wait cautiously", "Look for opportunities to add", "Stick to the plan with little stress"]
+        },
+        {
+          "id": "Q5",
+          "text": "Which outcome would bother you more?",
+          "options": ["Staying below the starting value for a long time", "Missing a large rally due to caution"]
+        },
+        {
+          "id": "Q6",
+          "text": "For the same long-term result, which path would you prefer?",
+          "options": ["Strongly prefer smooth", "Slightly prefer smooth", "No preference", "Slightly prefer bumpy", "Strongly prefer bumpy"]
+        }
+      ]
+    },
+    {
+      "id": "past_behavior",
+      "questions": [
+        {
+          "id": "Q7",
+          "text": "During the largest market downturn you experienced, what did you do?",
+          "options": ["Sold a lot", "Sold a little", "Did nothing", "Added more", "I was not investing then"]
+        },
+        {
+          "id": "Q8",
+          "text": "After your largest single-investment loss, what changed most?",
+          "options": ["Became much more cautious", "Reduced position sizes temporarily", "No major change", "Became more aggressive"]
+        },
+        {
+          "id": "Q9",
+          "text": "How often have you changed your investing approach?",
+          "options": ["Very often", "Occasionally", "Rarely", "Almost never"]
+        }
+      ]
+    },
+    {
+      "id": "decision_and_automation",
+      "questions": [
+        {
+          "id": "Q10",
+          "text": "When a system you trust has a bad month, what do you prefer?",
+          "options": ["Tighten rules immediately", "Observe for a few more months", "Assume bad months are normal"]
+        },
+        {
+          "id": "Q11",
+          "text": "How much direct control do you want over trades?",
+          "options": ["Approve most trades", "System trades within agreed rules", "Fully automated with minimal alerts"]
+        },
+        {
+          "id": "Q12",
+          "text": "How often would you realistically check this account?",
+          "options": ["Monthly or less", "Weekly", "A few times per week", "Daily or more"]
+        }
+      ]
+    },
+    {
+      "id": "goals_and_expectations",
+      "questions": [
+        {
+          "id": "Q13",
+          "text": "If this account had one main purpose, which would it be?",
+          "options": ["Preserve value", "Steady growth", "High growth with large swings", "High-potential side account"]
+        },
+        {
+          "id": "Q14",
+          "text": "How disappointed would you be if this account underperformed the market but felt much smoother?",
+          "options": ["Not disappointed", "Slightly disappointed", "Quite disappointed", "Extremely disappointed"]
+        }
+      ]
+    },
+    {
+      "id": "experience_and_complexity",
+      "questions": [
+        {
+          "id": "Q15",
+          "text": "Which of the following have you used with real money?",
+          "options": ["Individual stocks", "Broad index ETFs", "Sector or thematic ETFs", "Options", "Margin or leveraged products", "Crypto", "None of these"]
+        },
+        {
+          "id": "Q16",
+          "text": "When you encounter unfamiliar financial terms, you prefer:",
+          "options": ["Avoid them", "Short explanations", "Detailed explanations", "Technical language is fine"]
+        }
+      ]
+    },
+    {
+      "id": "industry_familiarity",
+      "questions": [
+        {
+          "id": "Q17",
+          "text": "Which best describes your current or most recent work or studies?",
+          "options": ["Technology / software / data", "Finance / economics / accounting", "Healthcare / biotech / medicine", "Engineering / manufacturing", "Energy / materials", "Sales / marketing / business", "Academia / research", "Creative industries", "Other / prefer not to say"]
+        },
+        {
+          "id": "Q18",
+          "text": "Which industries do you feel you understand better than average? (Up to 3)",
+          "options": ["Software / AI / semiconductors", "Consumer brands / retail", "Healthcare / pharmaceuticals", "Energy / utilities", "Financial services", "Industrials / logistics", "Media / entertainment", "Real estate", "None in particular"]
+        },
+        {
+          "id": "Q19",
+          "text": "When investing, what feels more appealing?",
+          "options": ["Companies I already understand", "A mix of familiar and unfamiliar", "Exploring new industries", "Broad exposure without focus"]
+        },
+        {
+          "id": "Q20",
+          "text": "If negative news appeared in an industry you know well, what would you most likely do?",
+          "options": ["Trust my own judgment", "Read more before acting", "Reduce exposure", "Avoid the sector"]
+        }
+      ]
+    },
+    {
+      "id": "constraints_and_values",
+      "questions": [
+        {
+          "id": "Q21",
+          "text": "Are there any industries or company types you prefer not to invest in?",
+          "options": ["Free text or multi-select"]
+        },
+        {
+          "id": "Q22",
+          "text": "Are there any industries or themes you are especially curious about right now?",
+          "options": ["Optional free text"]
+        }
+      ]
+    }
+  ]
+}
