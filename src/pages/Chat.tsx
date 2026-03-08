@@ -241,9 +241,9 @@ const Chat = () => {
                       : "border-border/50 bg-secondary/30 text-muted-foreground"
                   }`}
                 >
-                  {t.side === "hold" ? "⏸ 관망" : `${t.side === "buy" ? "🟢" : "🔴"} ${t.symbol} ${t.qty}주`}
+                  {t.side === "hold" ? "⏸ Hold" : `${t.side === "buy" ? "🟢" : "🔴"} ${t.symbol} ${t.qty} shares`}
                   <span className="text-muted-foreground ml-1">
-                    {new Date(t.created_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+                    {new Date(t.created_at).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
               ))}
