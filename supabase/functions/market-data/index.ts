@@ -16,6 +16,44 @@ serve(async (req) => {
     if (!key || !secret) throw new Error("Alpaca API keys not configured");
 
     const url = new URL(req.url);
+    const type = url.searchParams.get("type") || "bars";
+
+    // Account info endpoint
+    if (type === "account") {
+      const accRes = await fetch("https://paper-api.alpaca.markets/v2/account", {
+        headers: { "APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": secret },
+      });
+      if (!accRes.ok) throw new Error(`Alpaca account error: ${accRes.status}`);
+      const acc = await accRes.json();
+
+      // Also get positions
+      const posRes = await fetch("https://paper-api.alpaca.markets/v2/positions", {
+        headers: { "APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": secret },
+      });
+      const positions = posRes.ok ? await posRes.json() : [];
+
+      return new Response(
+        JSON.stringify({
+          equity: acc.equity,
+          cash: acc.cash,
+          buying_power: acc.buying_power,
+          portfolio_value: acc.portfolio_value,
+          last_equity: acc.last_equity,
+          daily_change: (parseFloat(acc.equity) - parseFloat(acc.last_equity)).toFixed(2),
+          daily_change_pct: (((parseFloat(acc.equity) - parseFloat(acc.last_equity)) / parseFloat(acc.last_equity)) * 100).toFixed(2),
+          positions: positions.map((p: any) => ({
+            symbol: p.symbol,
+            qty: p.qty,
+            market_value: p.market_value,
+            unrealized_pl: p.unrealized_pl,
+            unrealized_plpc: (parseFloat(p.unrealized_plpc) * 100).toFixed(2),
+            current_price: p.current_price,
+          })),
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const symbol = url.searchParams.get("symbol") || "SPY";
     const timeframe = url.searchParams.get("timeframe") || "1Day";
 
