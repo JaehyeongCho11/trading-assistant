@@ -92,7 +92,7 @@ const AccountBanner = () => {
 
         <div className="hidden sm:flex items-center gap-4 ml-auto">
           <div className="text-right">
-            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">현금</p>
+            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">Cash</p>
             <p className="text-xs font-mono text-foreground">
               ${parseFloat(data.cash).toLocaleString("en-US", { minimumFractionDigits: 2 })}
             </p>
