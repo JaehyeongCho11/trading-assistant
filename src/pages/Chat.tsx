@@ -135,7 +135,7 @@ const Chat = () => {
       const greeting: Msg = {
         role: "assistant",
         content:
-          "안녕하세요! 🚀 프로필 분석이 완료되었습니다.\n\n**자동 거래가 활성화**되었습니다. AI가 5분마다 시장을 분석하고 프로필에 맞는 거래를 자동으로 실행합니다. 컴퓨터를 꺼도 거래는 계속됩니다.\n\n직접 명령도 가능합니다:\n- \"테슬라 주식 10주 매수해줘\"\n- \"내 포트폴리오 보여줘\"\n- \"최근 자동 거래 내역 보여줘\"",
+          "Hello! 🚀 Profile analysis complete.\n\n**Auto-trading is now active.** The AI analyzes the market every 5 minutes and executes trades matching your profile — even when your computer is off.\n\nYou can also give direct commands:\n- \"Buy 10 shares of Tesla\"\n- \"Show my portfolio\"\n- \"Show recent auto-trade history\"",
       };
       setMessages([greeting]);
     }
