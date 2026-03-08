@@ -141,7 +141,7 @@ const AccountBanner = () => {
 
       {expanded && data.positions.length === 0 && (
         <div className="px-4 pb-3 pt-1 border-t border-border/30">
-          <p className="text-xs text-muted-foreground text-center py-2">보유 종목이 없습니다</p>
+          <p className="text-xs text-muted-foreground text-center py-2">No positions held</p>
         </div>
       )}
     </div>
