@@ -123,10 +123,10 @@ const Chat = () => {
       .update({ auto_trade_enabled: enabled })
       .eq("profile_key", "default");
     toast({
-      title: enabled ? "자동 거래 활성화" : "자동 거래 비활성화",
+      title: enabled ? "Auto-Trade Enabled" : "Auto-Trade Disabled",
       description: enabled
-        ? "AI가 5분마다 시장을 분석하고 자동으로 거래합니다."
-        : "자동 거래가 중지되었습니다.",
+        ? "AI analyzes the market every 5 minutes and trades automatically."
+        : "Auto-trading has been stopped.",
     });
   };
 
