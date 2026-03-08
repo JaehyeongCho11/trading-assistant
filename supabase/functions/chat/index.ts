@@ -138,10 +138,10 @@ serve(async (req) => {
     const profile = messages[0]?.role === "user" ? "" : "";
     
     const systemPrompt = `You are an AI trading assistant that helps users trade stocks via Alpaca Paper Trading API.
-You respond in Korean by default.
+You respond in English by default.
 
 Key rules:
-- Always confirm before placing actual orders (e.g., "테슬라 10주 시장가 매수하겠습니다. 진행할까요?")
+- Always confirm before placing actual orders (e.g., "I'll buy 10 shares of Tesla at market price. Shall I proceed?")
 - After placing orders, report the result clearly
 - Use tools to fetch real data, never make up numbers
 - Format currency values nicely

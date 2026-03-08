@@ -58,7 +58,7 @@ const TradeHistory = () => {
         <Button variant="ghost" size="icon" onClick={() => navigate("/chat")} className="w-8 h-8">
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="font-semibold text-sm">거래 내역</h1>
+        <h1 className="font-semibold text-sm">Trade History</h1>
         <Button variant="ghost" size="icon" onClick={loadTrades} className="ml-auto w-8 h-8">
           <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
         </Button>
@@ -67,10 +67,10 @@ const TradeHistory = () => {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-2 p-4">
         {[
-          { label: "전체", value: stats.total, color: "text-foreground" },
-          { label: "매수", value: stats.buys, color: "text-primary" },
-          { label: "매도", value: stats.sells, color: "text-destructive" },
-          { label: "관망", value: stats.holds, color: "text-muted-foreground" },
+          { label: "All", value: stats.total, color: "text-foreground" },
+          { label: "Buy", value: stats.buys, color: "text-primary" },
+          { label: "Sell", value: stats.sells, color: "text-destructive" },
+          { label: "Hold", value: stats.holds, color: "text-muted-foreground" },
         ].map((s) => (
           <div key={s.label} className="glass rounded-xl p-3 text-center">
             <p className={`text-lg font-bold font-mono ${s.color}`}>{s.value}</p>
@@ -91,7 +91,7 @@ const TradeHistory = () => {
                 : "bg-secondary/40 text-muted-foreground hover:bg-secondary/60"
             }`}
           >
-            {f === "all" ? "전체" : f === "buy" ? "매수" : f === "sell" ? "매도" : "관망"}
+            {f === "all" ? "All" : f === "buy" ? "Buy" : f === "sell" ? "Sell" : "Hold"}
           </button>
         ))}
       </div>
@@ -101,7 +101,7 @@ const TradeHistory = () => {
         <div className="space-y-2 pb-4">
           {trades.length === 0 && !loading && (
             <div className="text-center py-12 text-muted-foreground text-sm">
-              거래 내역이 없습니다
+              No trade history yet
             </div>
           )}
           {trades.map((t) => (
@@ -131,7 +131,7 @@ const TradeHistory = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-semibold text-sm">
-                      {t.side === "hold" ? "관망" : t.symbol}
+                      {t.side === "hold" ? "Hold" : t.symbol}
                     </span>
                     <span
                       className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
@@ -142,14 +142,14 @@ const TradeHistory = () => {
                           : "bg-secondary text-muted-foreground"
                       }`}
                     >
-                      {t.side === "buy" ? "매수" : t.side === "sell" ? "매도" : "관망"}
+                      {t.side === "buy" ? "Buy" : t.side === "sell" ? "Sell" : "Hold"}
                     </span>
                     {t.status && t.status !== "hold" && (
                       <span className="text-[10px] text-muted-foreground">{t.status}</span>
                     )}
                   </div>
                   <span className="text-[10px] text-muted-foreground font-mono">
-                    {new Date(t.created_at).toLocaleDateString("ko-KR", {
+                    {new Date(t.created_at).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       hour: "2-digit",
@@ -160,7 +160,7 @@ const TradeHistory = () => {
 
                 {t.side !== "hold" && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    {t.qty}주{t.price ? ` · $${Number(t.price).toFixed(2)}` : ""}
+                    {t.qty} shares{t.price ? ` · $${Number(t.price).toFixed(2)}` : ""}
                   </p>
                 )}
 

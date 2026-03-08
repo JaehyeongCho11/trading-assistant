@@ -30,15 +30,13 @@ const Index = () => {
         </motion.div>
 
         <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
-          AI가 당신의
+          AI Becomes
           <br />
-          <span className="text-primary">트레이딩 파트너</span>가
-          <br />
-          됩니다
+          Your <span className="text-primary">Trading Partner</span>
         </h1>
 
         <p className="text-muted-foreground text-lg mb-10 max-w-md mx-auto leading-relaxed">
-          간단한 설문으로 투자 성향을 파악하고, AI가 자동으로 주식을 거래합니다.
+          Take a quick survey to identify your investment style, and let AI trade stocks automatically for you.
         </p>
 
         <motion.div
@@ -52,6 +50,7 @@ const Index = () => {
             className="bg-primary text-primary-foreground hover:bg-primary/90 glow-primary text-base px-8 py-6 rounded-xl"
           >
             시작하기
+            Get Started
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </motion.div>
@@ -64,9 +63,9 @@ const Index = () => {
           className="mt-16 grid grid-cols-3 gap-6"
         >
           {[
-            { icon: TrendingUp, label: "자동 거래", desc: "AI 기반 매매" },
-            { icon: Bot, label: "AI 분석", desc: "실시간 시장 분석" },
-            { icon: Shield, label: "안전 거래", desc: "Paper Trading" },
+            { icon: TrendingUp, label: "Auto Trading", desc: "AI-powered trades" },
+            { icon: Bot, label: "AI Analysis", desc: "Real-time market analysis" },
+            { icon: Shield, label: "Safe Trading", desc: "Paper Trading" },
           ].map(({ icon: Icon, label, desc }) => (
             <div key={label} className="glass rounded-xl p-4 text-center">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3">

@@ -37,15 +37,15 @@ async function streamChat({
   });
 
   if (resp.status === 429) {
-    onError("요청이 너무 많습니다. 잠시 후 다시 시도해주세요.");
+    onError("Too many requests. Please try again later.");
     return;
   }
   if (resp.status === 402) {
-    onError("크레딧이 부족합니다. 충전이 필요합니다.");
+    onError("Insufficient credits. Please recharge.");
     return;
   }
   if (!resp.ok || !resp.body) {
-    onError("AI 응답 오류가 발생했습니다.");
+    onError("An error occurred with the AI response.");
     return;
   }
 
@@ -123,10 +123,10 @@ const Chat = () => {
       .update({ auto_trade_enabled: enabled })
       .eq("profile_key", "default");
     toast({
-      title: enabled ? "자동 거래 활성화" : "자동 거래 비활성화",
+      title: enabled ? "Auto-Trade Enabled" : "Auto-Trade Disabled",
       description: enabled
-        ? "AI가 5분마다 시장을 분석하고 자동으로 거래합니다."
-        : "자동 거래가 중지되었습니다.",
+        ? "AI analyzes the market every 5 minutes and trades automatically."
+        : "Auto-trading has been stopped.",
     });
   };
 
@@ -135,7 +135,7 @@ const Chat = () => {
       const greeting: Msg = {
         role: "assistant",
         content:
-          "안녕하세요! 🚀 프로필 분석이 완료되었습니다.\n\n**자동 거래가 활성화**되었습니다. AI가 5분마다 시장을 분석하고 프로필에 맞는 거래를 자동으로 실행합니다. 컴퓨터를 꺼도 거래는 계속됩니다.\n\n직접 명령도 가능합니다:\n- \"테슬라 주식 10주 매수해줘\"\n- \"내 포트폴리오 보여줘\"\n- \"최근 자동 거래 내역 보여줘\"",
+          "Hello! 🚀 Profile analysis complete.\n\n**Auto-trading is now active.** The AI analyzes the market every 5 minutes and executes trades matching your profile — even when your computer is off.\n\nYou can also give direct commands:\n- \"Buy 10 shares of Tesla\"\n- \"Show my portfolio\"\n- \"Show recent auto-trade history\"",
       };
       setMessages([greeting]);
     }
@@ -173,12 +173,12 @@ const Chat = () => {
         onDelta: upsertAssistant,
         onDone: () => setIsLoading(false),
         onError: (msg) => {
-          toast({ variant: "destructive", title: "오류", description: msg });
+          toast({ variant: "destructive", title: "Error", description: msg });
           setIsLoading(false);
         },
       });
     } catch {
-      toast({ variant: "destructive", title: "오류", description: "네트워크 오류가 발생했습니다." });
+      toast({ variant: "destructive", title: "Error", description: "A network error occurred." });
       setIsLoading(false);
     }
   };
@@ -195,7 +195,7 @@ const Chat = () => {
           {/* Auto-trade toggle */}
           <div className="flex items-center gap-2">
             <Zap className={`w-3.5 h-3.5 ${autoTradeEnabled ? "text-primary" : "text-muted-foreground"}`} />
-            <span className="text-xs text-muted-foreground hidden sm:inline">자동 거래</span>
+            <span className="text-xs text-muted-foreground hidden sm:inline">Auto Trade</span>
             <Switch
               checked={autoTradeEnabled}
               onCheckedChange={toggleAutoTrade}
@@ -207,7 +207,7 @@ const Chat = () => {
             size="icon"
             onClick={() => navigate("/history")}
             className="w-8 h-8"
-            title="거래 내역"
+            title="Trade History"
           >
             <History className="w-4 h-4" />
           </Button>
@@ -241,9 +241,9 @@ const Chat = () => {
                       : "border-border/50 bg-secondary/30 text-muted-foreground"
                   }`}
                 >
-                  {t.side === "hold" ? "⏸ 관망" : `${t.side === "buy" ? "🟢" : "🔴"} ${t.symbol} ${t.qty}주`}
+                  {t.side === "hold" ? "⏸ Hold" : `${t.side === "buy" ? "🟢" : "🔴"} ${t.symbol} ${t.qty} shares`}
                   <span className="text-muted-foreground ml-1">
-                    {new Date(t.created_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+                    {new Date(t.created_at).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
               ))}
@@ -318,7 +318,7 @@ const Chat = () => {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="메시지를 입력하세요..."
+            placeholder="Type a message..."
             className="bg-secondary/50 border-border/50 h-12"
             disabled={isLoading}
           />

@@ -72,7 +72,7 @@ const AccountBanner = () => {
             <Wallet className="w-3.5 h-3.5 text-primary" />
           </div>
           <div className="text-left">
-            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">총 자산</p>
+            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">Total Equity</p>
             <p className="text-sm font-mono font-semibold text-foreground">
               ${parseFloat(data.equity).toLocaleString("en-US", { minimumFractionDigits: 2 })}
             </p>
@@ -92,13 +92,13 @@ const AccountBanner = () => {
 
         <div className="hidden sm:flex items-center gap-4 ml-auto">
           <div className="text-right">
-            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">현금</p>
+            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">Cash</p>
             <p className="text-xs font-mono text-foreground">
               ${parseFloat(data.cash).toLocaleString("en-US", { minimumFractionDigits: 2 })}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">매수 가능</p>
+            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">Buying Power</p>
             <p className="text-xs font-mono text-foreground">
               ${parseFloat(data.buying_power).toLocaleString("en-US", { minimumFractionDigits: 2 })}
             </p>
@@ -114,7 +114,7 @@ const AccountBanner = () => {
       {/* Expanded positions */}
       {expanded && data.positions.length > 0 && (
         <div className="px-4 pb-3 pt-1 border-t border-border/30">
-          <p className="text-[10px] text-muted-foreground mb-2 font-medium">보유 종목</p>
+          <p className="text-[10px] text-muted-foreground mb-2 font-medium">Positions</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {data.positions.map((pos) => {
               const pl = parseFloat(pos.unrealized_pl);
@@ -126,7 +126,7 @@ const AccountBanner = () => {
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-mono font-semibold text-foreground">{pos.symbol}</span>
-                    <span className="text-[10px] text-muted-foreground">{pos.qty}주</span>
+                    <span className="text-[10px] text-muted-foreground">{pos.qty} shares</span>
                   </div>
                   <p className="text-xs font-mono text-foreground">${parseFloat(pos.current_price).toFixed(2)}</p>
                   <p className={`text-[10px] font-mono ${plPositive ? "text-primary" : "text-destructive"}`}>
@@ -141,7 +141,7 @@ const AccountBanner = () => {
 
       {expanded && data.positions.length === 0 && (
         <div className="px-4 pb-3 pt-1 border-t border-border/30">
-          <p className="text-xs text-muted-foreground text-center py-2">보유 종목이 없습니다</p>
+          <p className="text-xs text-muted-foreground text-center py-2">No positions held</p>
         </div>
       )}
     </div>

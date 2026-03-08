@@ -136,7 +136,7 @@ const StockChart = () => {
             <div className="absolute top-full left-0 mt-1 w-64 glass rounded-xl border border-border/50 p-2 z-50 shadow-xl">
               <Input
                 autoFocus
-                placeholder="종목 검색..."
+                placeholder="Search symbol..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-8 text-xs bg-secondary/50 border-border/50 mb-2"
@@ -161,7 +161,7 @@ const StockChart = () => {
                   </button>
                 ))}
                 {filtered.length === 0 && (
-                  <p className="text-xs text-muted-foreground text-center py-2">결과 없음</p>
+                  <p className="text-xs text-muted-foreground text-center py-2">No results</p>
                 )}
               </div>
             </div>
