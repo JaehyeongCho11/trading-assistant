@@ -37,15 +37,15 @@ async function streamChat({
   });
 
   if (resp.status === 429) {
-    onError("요청이 너무 많습니다. 잠시 후 다시 시도해주세요.");
+    onError("Too many requests. Please try again later.");
     return;
   }
   if (resp.status === 402) {
-    onError("크레딧이 부족합니다. 충전이 필요합니다.");
+    onError("Insufficient credits. Please recharge.");
     return;
   }
   if (!resp.ok || !resp.body) {
-    onError("AI 응답 오류가 발생했습니다.");
+    onError("An error occurred with the AI response.");
     return;
   }
 
