@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import questionsData from "@/data/onboardingQuestions.json";
 
 type Answer = string | string[];
@@ -47,12 +48,19 @@ const Onboarding = () => {
     });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentIdx < total - 1) {
       setCurrentIdx((i) => i + 1);
     } else {
-      // Save profile & navigate to chat
+      // Save profile to DB and localStorage
       localStorage.setItem("tradingProfile", JSON.stringify(answers));
+      
+      await supabase.from("trading_profiles").upsert({
+        profile_key: "default",
+        survey_answers: answers,
+        auto_trade_enabled: true,
+      }, { onConflict: "profile_key" });
+      
       navigate("/chat");
     }
   };

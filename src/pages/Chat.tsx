@@ -4,7 +4,8 @@ import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot, User, TrendingUp, Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Send, Bot, User, TrendingUp, Loader2, Zap, History } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import StockChart from "@/components/StockChart";
 import { useToast } from "@/hooks/use-toast";
@@ -83,16 +84,55 @@ const Chat = () => {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [autoTradeEnabled, setAutoTradeEnabled] = useState(true);
+  const [recentTrades, setRecentTrades] = useState<any[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const profile = localStorage.getItem("tradingProfile");
 
+  // Load auto-trade status and recent trades
+  useEffect(() => {
+    const loadStatus = async () => {
+      const { data: prof } = await supabase
+        .from("trading_profiles")
+        .select("auto_trade_enabled")
+        .eq("profile_key", "default")
+        .single();
+      if (prof) setAutoTradeEnabled(prof.auto_trade_enabled);
+
+      const { data: trades } = await supabase
+        .from("trade_history")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(5);
+      if (trades) setRecentTrades(trades);
+    };
+    loadStatus();
+
+    // Poll for new trades every 30s
+    const interval = setInterval(loadStatus, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const toggleAutoTrade = async (enabled: boolean) => {
+    setAutoTradeEnabled(enabled);
+    await supabase
+      .from("trading_profiles")
+      .update({ auto_trade_enabled: enabled })
+      .eq("profile_key", "default");
+    toast({
+      title: enabled ? "자동 거래 활성화" : "자동 거래 비활성화",
+      description: enabled
+        ? "AI가 5분마다 시장을 분석하고 자동으로 거래합니다."
+        : "자동 거래가 중지되었습니다.",
+    });
+  };
+
   useEffect(() => {
     if (messages.length === 0 && profile) {
-      // Send initial greeting with profile context
       const greeting: Msg = {
         role: "assistant",
         content:
-          "안녕하세요! 🚀 프로필 분석이 완료되었습니다. 저는 당신의 AI 트레이딩 어시스턴트입니다.\n\n주식 매매, 포트폴리오 분석, 시장 조사 등 무엇이든 물어보세요. Alpaca Paper Trading으로 자동 거래도 가능합니다.\n\n예시:\n- \"테슬라 주식 10주 매수해줘\"\n- \"내 포트폴리오 보여줘\"\n- \"현재 시장 트렌드 분석해줘\"",
+          "안녕하세요! 🚀 프로필 분석이 완료되었습니다.\n\n**자동 거래가 활성화**되었습니다. AI가 5분마다 시장을 분석하고 프로필에 맞는 거래를 자동으로 실행합니다. 컴퓨터를 꺼도 거래는 계속됩니다.\n\n직접 명령도 가능합니다:\n- \"테슬라 주식 10주 매수해줘\"\n- \"내 포트폴리오 보여줘\"\n- \"최근 자동 거래 내역 보여줘\"",
       };
       setMessages([greeting]);
     }
@@ -148,14 +188,54 @@ const Chat = () => {
           <TrendingUp className="w-5 h-5 text-primary" />
         </div>
         <h1 className="font-semibold text-sm">AI Trading Assistant</h1>
-        <div className="ml-auto flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <span className="text-xs text-muted-foreground">Live</span>
+        <div className="ml-auto flex items-center gap-4">
+          {/* Auto-trade toggle */}
+          <div className="flex items-center gap-2">
+            <Zap className={`w-3.5 h-3.5 ${autoTradeEnabled ? "text-primary" : "text-muted-foreground"}`} />
+            <span className="text-xs text-muted-foreground hidden sm:inline">자동 거래</span>
+            <Switch
+              checked={autoTradeEnabled}
+              onCheckedChange={toggleAutoTrade}
+              className="scale-75"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${autoTradeEnabled ? "bg-primary animate-pulse" : "bg-muted-foreground"}`} />
+            <span className="text-xs text-muted-foreground">{autoTradeEnabled ? "Active" : "Off"}</span>
+          </div>
         </div>
       </div>
 
       {/* Stock Chart */}
       <StockChart />
+
+      {/* Recent auto-trades banner */}
+      {recentTrades.length > 0 && (
+        <div className="glass border-b border-border/50 px-4 py-2 overflow-x-auto">
+          <div className="flex items-center gap-3">
+            <History className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+            <div className="flex gap-2 overflow-x-auto scrollbar-none">
+              {recentTrades.map((t) => (
+                <div
+                  key={t.id}
+                  className={`flex-shrink-0 px-3 py-1 rounded-md text-[10px] font-mono border ${
+                    t.side === "buy"
+                      ? "border-primary/30 bg-primary/5 text-primary"
+                      : t.side === "sell"
+                      ? "border-destructive/30 bg-destructive/5 text-destructive"
+                      : "border-border/50 bg-secondary/30 text-muted-foreground"
+                  }`}
+                >
+                  {t.side === "hold" ? "⏸ 관망" : `${t.side === "buy" ? "🟢" : "🔴"} ${t.symbol} ${t.qty}주`}
+                  <span className="text-muted-foreground ml-1">
+                    {new Date(t.created_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">

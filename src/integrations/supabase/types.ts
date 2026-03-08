@@ -14,7 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      trade_history: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string | null
+          price: number | null
+          profile_id: string | null
+          qty: number
+          reason: string | null
+          side: string
+          status: string | null
+          symbol: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          price?: number | null
+          profile_id?: string | null
+          qty: number
+          reason?: string | null
+          side: string
+          status?: string | null
+          symbol: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          price?: number | null
+          profile_id?: string | null
+          qty?: number
+          reason?: string | null
+          side?: string
+          status?: string | null
+          symbol?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_history_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "trading_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trading_profiles: {
+        Row: {
+          auto_trade_enabled: boolean
+          created_at: string
+          id: string
+          max_trade_amount: number | null
+          profile_key: string
+          strategy_prompt: string | null
+          survey_answers: Json | null
+          updated_at: string
+        }
+        Insert: {
+          auto_trade_enabled?: boolean
+          created_at?: string
+          id?: string
+          max_trade_amount?: number | null
+          profile_key?: string
+          strategy_prompt?: string | null
+          survey_answers?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          auto_trade_enabled?: boolean
+          created_at?: string
+          id?: string
+          max_trade_amount?: number | null
+          profile_key?: string
+          strategy_prompt?: string | null
+          survey_answers?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
