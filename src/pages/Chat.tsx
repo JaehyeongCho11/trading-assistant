@@ -195,7 +195,7 @@ const Chat = () => {
           {/* Auto-trade toggle */}
           <div className="flex items-center gap-2">
             <Zap className={`w-3.5 h-3.5 ${autoTradeEnabled ? "text-primary" : "text-muted-foreground"}`} />
-            <span className="text-xs text-muted-foreground hidden sm:inline">자동 거래</span>
+            <span className="text-xs text-muted-foreground hidden sm:inline">Auto Trade</span>
             <Switch
               checked={autoTradeEnabled}
               onCheckedChange={toggleAutoTrade}
