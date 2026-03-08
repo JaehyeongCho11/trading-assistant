@@ -9,6 +9,7 @@ import { Send, Bot, User, TrendingUp, Loader2, Zap, History } from "lucide-react
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import StockChart from "@/components/StockChart";
+import AccountBanner from "@/components/AccountBanner";
 import { useToast } from "@/hooks/use-toast";
 
 type Msg = { role: "user" | "assistant"; content: string };
