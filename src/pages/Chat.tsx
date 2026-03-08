@@ -80,6 +80,7 @@ async function streamChat({
 }
 
 const Chat = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
