@@ -52,17 +52,22 @@ const Onboarding = () => {
     if (currentIdx < total - 1) {
       setCurrentIdx((i) => i + 1);
     } else {
-      // Save profile to DB and localStorage
-      localStorage.setItem("tradingProfile", JSON.stringify(answers));
-      
-      await supabase.from("trading_profiles").upsert({
-        profile_key: "default",
-        survey_answers: answers,
-        auto_trade_enabled: true,
-      }, { onConflict: "profile_key" });
-      
-      navigate("/chat");
+      await finishOnboarding();
     }
+  };
+
+  const finishOnboarding = async () => {
+    localStorage.setItem("tradingProfile", JSON.stringify(answers));
+    await supabase.from("trading_profiles").upsert({
+      profile_key: "default",
+      survey_answers: answers,
+      auto_trade_enabled: true,
+    }, { onConflict: "profile_key" });
+    navigate("/chat");
+  };
+
+  const handleSkip = async () => {
+    await finishOnboarding();
   };
 
   const handleBack = () => {
@@ -162,14 +167,14 @@ const Onboarding = () => {
 
             {(question.id === "Q15" || question.id === "Q18") && (
               <p className="text-xs text-muted-foreground mt-3">
-                여러 개 선택 가능
+                Multiple selections allowed
               </p>
             )}
           </motion.div>
         </AnimatePresence>
 
         {/* Navigation */}
-        <div className="flex justify-between mt-6">
+        <div className="flex justify-between items-center mt-6">
           <Button
             variant="ghost"
             onClick={handleBack}
@@ -177,7 +182,15 @@ const Onboarding = () => {
             className="text-muted-foreground"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            이전
+            Back
+          </Button>
+
+          <Button
+            variant="ghost"
+            onClick={handleSkip}
+            className="text-muted-foreground text-sm"
+          >
+            Skip Survey
           </Button>
 
           <Button
@@ -185,7 +198,7 @@ const Onboarding = () => {
             disabled={!hasAnswer && !isFreeText}
             className="bg-primary text-primary-foreground hover:bg-primary/90 glow-primary"
           >
-            {currentIdx === total - 1 ? "완료" : "다음"}
+            {currentIdx === total - 1 ? "Done" : "Next"}
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
