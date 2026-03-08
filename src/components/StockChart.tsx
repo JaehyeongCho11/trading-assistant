@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { createChart, ColorType, type IChartApi } from "lightweight-charts";
+import { createChart, ColorType, CandlestickSeries, type IChartApi } from "lightweight-charts";
 
 function generateMockData() {
   const data = [];
