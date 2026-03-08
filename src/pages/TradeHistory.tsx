@@ -131,7 +131,7 @@ const TradeHistory = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-semibold text-sm">
-                      {t.side === "hold" ? "관망" : t.symbol}
+                      {t.side === "hold" ? "Hold" : t.symbol}
                     </span>
                     <span
                       className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
