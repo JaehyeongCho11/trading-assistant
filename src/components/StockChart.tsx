@@ -52,7 +52,7 @@ const StockChart = () => {
       },
     });
 
-    const series = chart.addCandlestickSeries({
+    const series = chart.addSeries(CandlestickSeries, {
       upColor: "hsl(142, 60%, 50%)",
       downColor: "hsl(0, 72%, 51%)",
       borderDownColor: "hsl(0, 72%, 51%)",
