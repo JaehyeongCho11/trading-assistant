@@ -50,6 +50,7 @@ const Index = () => {
             className="bg-primary text-primary-foreground hover:bg-primary/90 glow-primary text-base px-8 py-6 rounded-xl"
           >
             시작하기
+            Get Started
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </motion.div>
