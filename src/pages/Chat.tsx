@@ -207,7 +207,7 @@ const Chat = () => {
             size="icon"
             onClick={() => navigate("/history")}
             className="w-8 h-8"
-            title="거래 내역"
+            title="Trade History"
           >
             <History className="w-4 h-4" />
           </Button>
