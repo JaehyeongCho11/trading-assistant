@@ -201,6 +201,15 @@ const Chat = () => {
               className="scale-75"
             />
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/history")}
+            className="w-8 h-8"
+            title="거래 내역"
+          >
+            <History className="w-4 h-4" />
+          </Button>
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${autoTradeEnabled ? "bg-primary animate-pulse" : "bg-muted-foreground"}`} />
             <span className="text-xs text-muted-foreground">{autoTradeEnabled ? "Active" : "Off"}</span>
