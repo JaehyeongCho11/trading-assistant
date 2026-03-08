@@ -48,12 +48,19 @@ const Onboarding = () => {
     });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentIdx < total - 1) {
       setCurrentIdx((i) => i + 1);
     } else {
-      // Save profile & navigate to chat
+      // Save profile to DB and localStorage
       localStorage.setItem("tradingProfile", JSON.stringify(answers));
+      
+      await supabase.from("trading_profiles").upsert({
+        profile_key: "default",
+        survey_answers: answers,
+        auto_trade_enabled: true,
+      }, { onConflict: "profile_key" });
+      
       navigate("/chat");
     }
   };
