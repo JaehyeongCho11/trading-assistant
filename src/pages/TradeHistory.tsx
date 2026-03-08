@@ -58,7 +58,7 @@ const TradeHistory = () => {
         <Button variant="ghost" size="icon" onClick={() => navigate("/chat")} className="w-8 h-8">
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="font-semibold text-sm">거래 내역</h1>
+        <h1 className="font-semibold text-sm">Trade History</h1>
         <Button variant="ghost" size="icon" onClick={loadTrades} className="ml-auto w-8 h-8">
           <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
         </Button>
