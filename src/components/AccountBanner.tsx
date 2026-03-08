@@ -72,7 +72,7 @@ const AccountBanner = () => {
             <Wallet className="w-3.5 h-3.5 text-primary" />
           </div>
           <div className="text-left">
-            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">총 자산</p>
+            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">Total Equity</p>
             <p className="text-sm font-mono font-semibold text-foreground">
               ${parseFloat(data.equity).toLocaleString("en-US", { minimumFractionDigits: 2 })}
             </p>
