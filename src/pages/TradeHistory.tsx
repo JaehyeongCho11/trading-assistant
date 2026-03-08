@@ -91,7 +91,7 @@ const TradeHistory = () => {
                 : "bg-secondary/40 text-muted-foreground hover:bg-secondary/60"
             }`}
           >
-            {f === "all" ? "전체" : f === "buy" ? "매수" : f === "sell" ? "매도" : "관망"}
+            {f === "all" ? "All" : f === "buy" ? "Buy" : f === "sell" ? "Sell" : "Hold"}
           </button>
         ))}
       </div>
