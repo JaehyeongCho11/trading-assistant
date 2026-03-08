@@ -52,17 +52,22 @@ const Onboarding = () => {
     if (currentIdx < total - 1) {
       setCurrentIdx((i) => i + 1);
     } else {
-      // Save profile to DB and localStorage
-      localStorage.setItem("tradingProfile", JSON.stringify(answers));
-      
-      await supabase.from("trading_profiles").upsert({
-        profile_key: "default",
-        survey_answers: answers,
-        auto_trade_enabled: true,
-      }, { onConflict: "profile_key" });
-      
-      navigate("/chat");
+      await finishOnboarding();
     }
+  };
+
+  const finishOnboarding = async () => {
+    localStorage.setItem("tradingProfile", JSON.stringify(answers));
+    await supabase.from("trading_profiles").upsert({
+      profile_key: "default",
+      survey_answers: answers,
+      auto_trade_enabled: true,
+    }, { onConflict: "profile_key" });
+    navigate("/chat");
+  };
+
+  const handleSkip = async () => {
+    await finishOnboarding();
   };
 
   const handleBack = () => {
