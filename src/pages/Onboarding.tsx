@@ -174,7 +174,7 @@ const Onboarding = () => {
         </AnimatePresence>
 
         {/* Navigation */}
-        <div className="flex justify-between mt-6">
+        <div className="flex justify-between items-center mt-6">
           <Button
             variant="ghost"
             onClick={handleBack}
@@ -182,7 +182,15 @@ const Onboarding = () => {
             className="text-muted-foreground"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            이전
+            Back
+          </Button>
+
+          <Button
+            variant="ghost"
+            onClick={handleSkip}
+            className="text-muted-foreground text-sm"
+          >
+            Skip Survey
           </Button>
 
           <Button
@@ -190,7 +198,7 @@ const Onboarding = () => {
             disabled={!hasAnswer && !isFreeText}
             className="bg-primary text-primary-foreground hover:bg-primary/90 glow-primary"
           >
-            {currentIdx === total - 1 ? "완료" : "다음"}
+            {currentIdx === total - 1 ? "Done" : "Next"}
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
