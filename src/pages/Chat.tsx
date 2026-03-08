@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { Send, Bot, User, TrendingUp, Loader2, Zap, History } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import StockChart from "@/components/StockChart";
 import { useToast } from "@/hooks/use-toast";
 
@@ -80,6 +81,7 @@ async function streamChat({
 }
 
 const Chat = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -199,6 +201,15 @@ const Chat = () => {
               className="scale-75"
             />
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/history")}
+            className="w-8 h-8"
+            title="거래 내역"
+          >
+            <History className="w-4 h-4" />
+          </Button>
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${autoTradeEnabled ? "bg-primary animate-pulse" : "bg-muted-foreground"}`} />
             <span className="text-xs text-muted-foreground">{autoTradeEnabled ? "Active" : "Off"}</span>
