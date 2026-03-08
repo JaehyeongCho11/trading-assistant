@@ -114,7 +114,7 @@ const AccountBanner = () => {
       {/* Expanded positions */}
       {expanded && data.positions.length > 0 && (
         <div className="px-4 pb-3 pt-1 border-t border-border/30">
-          <p className="text-[10px] text-muted-foreground mb-2 font-medium">보유 종목</p>
+          <p className="text-[10px] text-muted-foreground mb-2 font-medium">Positions</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {data.positions.map((pos) => {
               const pl = parseFloat(pos.unrealized_pl);
