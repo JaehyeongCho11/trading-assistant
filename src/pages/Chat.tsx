@@ -173,12 +173,12 @@ const Chat = () => {
         onDelta: upsertAssistant,
         onDone: () => setIsLoading(false),
         onError: (msg) => {
-          toast({ variant: "destructive", title: "오류", description: msg });
+          toast({ variant: "destructive", title: "Error", description: msg });
           setIsLoading(false);
         },
       });
     } catch {
-      toast({ variant: "destructive", title: "오류", description: "네트워크 오류가 발생했습니다." });
+      toast({ variant: "destructive", title: "Error", description: "A network error occurred." });
       setIsLoading(false);
     }
   };
