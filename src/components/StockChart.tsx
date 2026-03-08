@@ -34,6 +34,9 @@ const StockChart = () => {
     if (!containerRef.current) return;
 
     const chart = createChart(containerRef.current, {
+      localization: {
+        locale: 'en-US',
+      },
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
         textColor: "hsl(215, 12%, 50%)",
