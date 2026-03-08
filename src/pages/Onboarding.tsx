@@ -167,7 +167,7 @@ const Onboarding = () => {
 
             {(question.id === "Q15" || question.id === "Q18") && (
               <p className="text-xs text-muted-foreground mt-3">
-                여러 개 선택 가능
+                Multiple selections allowed
               </p>
             )}
           </motion.div>
