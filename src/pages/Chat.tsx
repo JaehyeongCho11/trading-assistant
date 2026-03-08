@@ -188,14 +188,54 @@ const Chat = () => {
           <TrendingUp className="w-5 h-5 text-primary" />
         </div>
         <h1 className="font-semibold text-sm">AI Trading Assistant</h1>
-        <div className="ml-auto flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <span className="text-xs text-muted-foreground">Live</span>
+        <div className="ml-auto flex items-center gap-4">
+          {/* Auto-trade toggle */}
+          <div className="flex items-center gap-2">
+            <Zap className={`w-3.5 h-3.5 ${autoTradeEnabled ? "text-primary" : "text-muted-foreground"}`} />
+            <span className="text-xs text-muted-foreground hidden sm:inline">자동 거래</span>
+            <Switch
+              checked={autoTradeEnabled}
+              onCheckedChange={toggleAutoTrade}
+              className="scale-75"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${autoTradeEnabled ? "bg-primary animate-pulse" : "bg-muted-foreground"}`} />
+            <span className="text-xs text-muted-foreground">{autoTradeEnabled ? "Active" : "Off"}</span>
+          </div>
         </div>
       </div>
 
       {/* Stock Chart */}
       <StockChart />
+
+      {/* Recent auto-trades banner */}
+      {recentTrades.length > 0 && (
+        <div className="glass border-b border-border/50 px-4 py-2 overflow-x-auto">
+          <div className="flex items-center gap-3">
+            <History className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+            <div className="flex gap-2 overflow-x-auto scrollbar-none">
+              {recentTrades.map((t) => (
+                <div
+                  key={t.id}
+                  className={`flex-shrink-0 px-3 py-1 rounded-md text-[10px] font-mono border ${
+                    t.side === "buy"
+                      ? "border-primary/30 bg-primary/5 text-primary"
+                      : t.side === "sell"
+                      ? "border-destructive/30 bg-destructive/5 text-destructive"
+                      : "border-border/50 bg-secondary/30 text-muted-foreground"
+                  }`}
+                >
+                  {t.side === "hold" ? "⏸ 관망" : `${t.side === "buy" ? "🟢" : "🔴"} ${t.symbol} ${t.qty}주`}
+                  <span className="text-muted-foreground ml-1">
+                    {new Date(t.created_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">
