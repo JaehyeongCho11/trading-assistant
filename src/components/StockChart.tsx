@@ -161,7 +161,7 @@ const StockChart = () => {
                   </button>
                 ))}
                 {filtered.length === 0 && (
-                  <p className="text-xs text-muted-foreground text-center py-2">결과 없음</p>
+                  <p className="text-xs text-muted-foreground text-center py-2">No results</p>
                 )}
               </div>
             </div>
