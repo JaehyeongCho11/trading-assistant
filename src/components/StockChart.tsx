@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createChart, ColorType, CandlestickSeries, type IChartApi, type ISeriesApi } from "lightweight-charts";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 
 const POPULAR_SYMBOLS = [
   { symbol: "SPY", name: "S&P 500 ETF" },
@@ -14,26 +14,9 @@ const POPULAR_SYMBOLS = [
   { symbol: "GOOGL", name: "Alphabet" },
 ];
 
-function generateMockData(seed: string) {
-  const data = [];
-  // Use symbol as seed for consistent but different data per symbol
-  let basePrice = 50 + (seed.charCodeAt(0) + seed.charCodeAt(seed.length - 1)) * 1.5;
-  const volatility = seed.length * 0.3 + 1;
-  const now = new Date();
-  for (let i = 90; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    basePrice += (Math.random() - 0.48) * volatility;
-    data.push({
-      time: date.toISOString().split("T")[0],
-      open: basePrice - Math.random() * (volatility * 0.5),
-      high: basePrice + Math.random() * (volatility * 0.8),
-      low: basePrice - Math.random() * (volatility * 0.8),
-      close: basePrice,
-    });
-  }
-  return data;
-}
+const MARKET_DATA_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/market-data`;
+
+type BarData = { time: string; open: number; high: number; low: number; close: number };
 
 const StockChart = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,6 +25,9 @@ const StockChart = () => {
   const [selected, setSelected] = useState(POPULAR_SYMBOLS[0]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [quote, setQuote] = useState<{ ask: number; bid: number } | null>(null);
+  const [lastClose, setLastClose] = useState<number | null>(null);
 
   // Create chart once
   useEffect(() => {
@@ -92,11 +78,38 @@ const StockChart = () => {
     };
   }, []);
 
-  // Update data when symbol changes
+  // Fetch real data when symbol changes
   useEffect(() => {
     if (!seriesRef.current || !chartRef.current) return;
-    seriesRef.current.setData(generateMockData(selected.symbol) as any);
-    chartRef.current.timeScale().fitContent();
+
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `${MARKET_DATA_URL}?symbol=${selected.symbol}`,
+          {
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+          }
+        );
+        const data = await res.json();
+
+        if (data.bars && data.bars.length > 0) {
+          seriesRef.current!.setData(data.bars as BarData[]);
+          chartRef.current!.timeScale().fitContent();
+          setLastClose(data.bars[data.bars.length - 1].close);
+        }
+        if (data.quote) {
+          setQuote(data.quote);
+        }
+      } catch (err) {
+        console.error("Failed to fetch market data:", err);
+      }
+      setLoading(false);
+    };
+
+    fetchData();
   }, [selected]);
 
   const filtered = POPULAR_SYMBOLS.filter(
@@ -109,7 +122,6 @@ const StockChart = () => {
     <div className="glass border-b border-border/50 px-4 py-3">
       {/* Symbol selector */}
       <div className="flex items-center gap-2 mb-2 px-1">
-        {/* Search / select */}
         <div className="relative">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
@@ -156,8 +168,28 @@ const StockChart = () => {
           )}
         </div>
 
+        {/* Quote info */}
+        <div className="flex items-center gap-3 ml-2">
+          {loading ? (
+            <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
+          ) : (
+            <>
+              {lastClose && (
+                <span className="text-xs font-mono font-semibold text-foreground">
+                  ${lastClose.toFixed(2)}
+                </span>
+              )}
+              {quote && (
+                <span className="text-[10px] font-mono text-muted-foreground">
+                  B: ${quote.bid?.toFixed(2)} · A: ${quote.ask?.toFixed(2)}
+                </span>
+              )}
+            </>
+          )}
+        </div>
+
         {/* Quick chips */}
-        <div className="flex-1 flex gap-1.5 overflow-x-auto scrollbar-none">
+        <div className="flex-1 flex gap-1.5 overflow-x-auto scrollbar-none justify-end">
           {POPULAR_SYMBOLS.slice(0, 6).map((s) => (
             <button
               key={s.symbol}
@@ -176,7 +208,6 @@ const StockChart = () => {
 
       <div ref={containerRef} />
 
-      {/* Close dropdown on outside click */}
       {showDropdown && (
         <div className="fixed inset-0 z-40" onClick={() => { setShowDropdown(false); setSearchQuery(""); }} />
       )}
