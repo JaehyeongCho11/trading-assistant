@@ -126,7 +126,7 @@ const AccountBanner = () => {
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-mono font-semibold text-foreground">{pos.symbol}</span>
-                    <span className="text-[10px] text-muted-foreground">{pos.qty}주</span>
+                    <span className="text-[10px] text-muted-foreground">{pos.qty} shares</span>
                   </div>
                   <p className="text-xs font-mono text-foreground">${parseFloat(pos.current_price).toFixed(2)}</p>
                   <p className={`text-[10px] font-mono ${plPositive ? "text-primary" : "text-destructive"}`}>
