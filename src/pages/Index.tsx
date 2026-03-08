@@ -63,9 +63,9 @@ const Index = () => {
           className="mt-16 grid grid-cols-3 gap-6"
         >
           {[
-            { icon: TrendingUp, label: "자동 거래", desc: "AI 기반 매매" },
-            { icon: Bot, label: "AI 분석", desc: "실시간 시장 분석" },
-            { icon: Shield, label: "안전 거래", desc: "Paper Trading" },
+            { icon: TrendingUp, label: "Auto Trading", desc: "AI-powered trades" },
+            { icon: Bot, label: "AI Analysis", desc: "Real-time market analysis" },
+            { icon: Shield, label: "Safe Trading", desc: "Paper Trading" },
           ].map(({ icon: Icon, label, desc }) => (
             <div key={label} className="glass rounded-xl p-4 text-center">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3">

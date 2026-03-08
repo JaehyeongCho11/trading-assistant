@@ -98,7 +98,7 @@ const AccountBanner = () => {
             </p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">매수 가능</p>
+            <p className="text-[10px] text-muted-foreground leading-none mb-0.5">Buying Power</p>
             <p className="text-xs font-mono text-foreground">
               ${parseFloat(data.buying_power).toLocaleString("en-US", { minimumFractionDigits: 2 })}
             </p>
