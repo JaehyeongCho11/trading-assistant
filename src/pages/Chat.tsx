@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Bot, User, TrendingUp, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import StockChart from "@/components/StockChart";
 import { useToast } from "@/hooks/use-toast";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -142,19 +143,19 @@ const Chat = () => {
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}
-      <div className="glass border-b border-border/50 px-6 py-4 flex items-center gap-3">
+      <div className="glass border-b border-border/50 px-6 py-3 flex items-center gap-3">
         <div className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center">
           <TrendingUp className="w-5 h-5 text-primary" />
         </div>
-        <div>
-          <h1 className="font-semibold text-sm">AI Trading Assistant</h1>
-          <p className="text-xs text-muted-foreground">Alpaca Paper Trading</p>
-        </div>
+        <h1 className="font-semibold text-sm">AI Trading Assistant</h1>
         <div className="ml-auto flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           <span className="text-xs text-muted-foreground">Live</span>
         </div>
       </div>
+
+      {/* Stock Chart */}
+      <StockChart />
 
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">
