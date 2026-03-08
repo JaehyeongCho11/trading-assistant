@@ -218,6 +218,9 @@ const Chat = () => {
         </div>
       </div>
 
+      {/* Account Info */}
+      <AccountBanner />
+
       {/* Stock Chart */}
       <StockChart />
 
