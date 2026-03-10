@@ -113,7 +113,7 @@ const Chat = () => {
     loadStatus();
     const interval = setInterval(loadStatus, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user]);
 
   const toggleAutoTrade = async (enabled: boolean) => {
     setAutoTradeEnabled(enabled);
