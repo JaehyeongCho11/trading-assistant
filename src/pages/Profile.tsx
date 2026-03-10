@@ -40,7 +40,8 @@ const Profile = () => {
       auto_trade_enabled: autoTradeEnabled,
       max_trade_amount: parseFloat(maxTradeAmount) || 1000,
       strategy_prompt: strategyPrompt,
-    }).eq("profile_key", "default");
+      trade_interval_minutes: parseInt(tradeInterval) || 5,
+    } as any).eq("profile_key", "default");
     if (error) {
       toast({ variant: "destructive", title: "Error", description: "Failed to save profile." });
     } else {
