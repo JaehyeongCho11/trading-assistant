@@ -159,11 +159,13 @@ const Chat = () => {
     };
 
     try {
+      const { data: { session: s } } = await supabase.auth.getSession();
       await streamChat({
         messages: newMessages.filter((m) => m.role !== "assistant" || m.content),
         onDelta: upsertAssistant,
         onDone: () => setIsLoading(false),
         onError: (msg) => { toast({ variant: "destructive", title: "Error", description: msg }); setIsLoading(false); },
+        accessToken: s?.access_token || "",
       });
     } catch {
       toast({ variant: "destructive", title: "Error", description: "A network error occurred." });
