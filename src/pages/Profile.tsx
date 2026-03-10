@@ -28,6 +28,7 @@ const Profile = () => {
       setAutoTradeEnabled(data.auto_trade_enabled);
       setMaxTradeAmount(String(data.max_trade_amount || 1000));
       setStrategyPrompt(data.strategy_prompt || "");
+      setTradeInterval(String((data as any).trade_interval_minutes || 5));
       setSurveyAnswers((data.survey_answers as Record<string, any>) || {});
     }
     setLoading(false);
