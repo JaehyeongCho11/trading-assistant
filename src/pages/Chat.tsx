@@ -116,8 +116,9 @@ const Chat = () => {
   }, [user]);
 
   const toggleAutoTrade = async (enabled: boolean) => {
+    if (!user) return;
     setAutoTradeEnabled(enabled);
-    await supabase.from("trading_profiles").update({ auto_trade_enabled: enabled }).eq("profile_key", "default");
+    await supabase.from("trading_profiles").update({ auto_trade_enabled: enabled }).eq("user_id", user.id);
     toast({
       title: enabled ? "Auto-Trade Enabled" : "Auto-Trade Disabled",
       description: enabled ? "AI analyzes the market every 5 minutes and trades automatically." : "Auto-trading has been stopped.",
