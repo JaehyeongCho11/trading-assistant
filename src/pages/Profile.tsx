@@ -123,7 +123,7 @@ const Profile = () => {
               onChange={(e) => setStrategyPrompt(e.target.value)}
               rows={4}
               className="w-full rounded-lg border border-border/40 bg-muted/30 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none transition-shadow"
-              placeholder="예: 기술주 중심으로, 보수적으로 투자..."
+              placeholder="e.g. Focus on tech stocks, be conservative with risk..."
             />
           </div>
 
