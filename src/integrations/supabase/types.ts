@@ -26,6 +26,7 @@ export type Database = {
           side: string
           status: string | null
           symbol: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -38,6 +39,7 @@ export type Database = {
           side: string
           status?: string | null
           symbol: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -50,6 +52,7 @@ export type Database = {
           side?: string
           status?: string | null
           symbol?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -97,6 +100,63 @@ export type Database = {
           trade_interval_minutes?: number
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_accounts: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          initial_balance: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id?: string
+          initial_balance?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          initial_balance?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_positions: {
+        Row: {
+          avg_entry_price: number
+          created_at: string
+          id: string
+          qty: number
+          symbol: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avg_entry_price?: number
+          created_at?: string
+          id?: string
+          qty?: number
+          symbol: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avg_entry_price?: number
+          created_at?: string
+          id?: string
+          qty?: number
+          symbol?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
