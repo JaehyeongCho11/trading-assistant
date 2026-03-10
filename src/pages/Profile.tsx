@@ -40,9 +40,9 @@ const Profile = () => {
       strategy_prompt: strategyPrompt,
     }).eq("profile_key", "default");
     if (error) {
-      toast({ variant: "destructive", title: "오류", description: "프로필 저장에 실패했습니다." });
+      toast({ variant: "destructive", title: "Error", description: "Failed to save profile." });
     } else {
-      toast({ title: "저장 완료", description: "프로필이 업데이트되었습니다." });
+      toast({ title: "Saved", description: "Profile updated successfully." });
     }
     setSaving(false);
   };
@@ -62,7 +62,7 @@ const Profile = () => {
         <Button variant="ghost" size="icon" onClick={() => navigate("/chat")} className="w-8 h-8 rounded-lg">
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="font-semibold text-sm">트레이딩 프로필</h1>
+        <h1 className="font-semibold text-sm">Trading Profile</h1>
         <Button variant="ghost" size="icon" onClick={saveProfile} disabled={saving} className="ml-auto w-8 h-8 rounded-lg">
           <Save className={`w-4 h-4 ${saving ? "animate-pulse" : ""}`} />
         </Button>
@@ -77,8 +77,8 @@ const Profile = () => {
                 <Zap className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-foreground">자동 매매</p>
-                <p className="text-[11px] text-muted-foreground">AI가 자율적으로 트레이딩합니다</p>
+                <p className="text-sm font-semibold text-foreground">Auto Trading</p>
+                <p className="text-[11px] text-muted-foreground">Enable AI-powered autonomous trading</p>
               </div>
               <Switch checked={autoTradeEnabled} onCheckedChange={setAutoTradeEnabled} />
             </div>
@@ -91,8 +91,8 @@ const Profile = () => {
                 <DollarSign className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">최대 거래 금액</p>
-                <p className="text-[11px] text-muted-foreground">1회 거래 최대 금액 (USD)</p>
+                <p className="text-sm font-semibold text-foreground">Max Trade Amount</p>
+                <p className="text-[11px] text-muted-foreground">Maximum amount per trade in USD</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -114,8 +114,8 @@ const Profile = () => {
                 <Brain className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">투자 전략</p>
-                <p className="text-[11px] text-muted-foreground">AI 트레이더에게 전달할 커스텀 지시사항</p>
+                <p className="text-sm font-semibold text-foreground">Trading Strategy</p>
+                <p className="text-[11px] text-muted-foreground">Custom instructions for the AI trader</p>
               </div>
             </div>
             <textarea
@@ -123,7 +123,7 @@ const Profile = () => {
               onChange={(e) => setStrategyPrompt(e.target.value)}
               rows={4}
               className="w-full rounded-lg border border-border/40 bg-muted/30 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none transition-shadow"
-              placeholder="예: 기술주 중심으로, 보수적으로 투자..."
+              placeholder="e.g. Focus on tech stocks, be conservative with risk..."
             />
           </div>
 
@@ -135,8 +135,8 @@ const Profile = () => {
                   <User className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">설문 응답</p>
-                  <p className="text-[11px] text-muted-foreground">온보딩 시 설정한 투자 성향</p>
+                  <p className="text-sm font-semibold text-foreground">Survey Responses</p>
+                  <p className="text-[11px] text-muted-foreground">Your onboarding preferences</p>
                 </div>
               </div>
               <div className="space-y-2">
@@ -150,14 +150,14 @@ const Profile = () => {
                 ))}
               </div>
               <Button variant="outline" size="sm" className="mt-3 text-xs" onClick={() => navigate("/onboarding")}>
-                설문 다시하기
+                Retake Survey
               </Button>
             </div>
           )}
 
           {/* Save Button */}
           <Button onClick={saveProfile} disabled={saving} className="w-full h-11 rounded-xl font-semibold">
-            {saving ? "저장 중..." : "변경사항 저장"}
+            {saving ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </ScrollArea>

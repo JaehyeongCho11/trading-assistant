@@ -30,13 +30,13 @@ const Index = () => {
         </motion.div>
 
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
-          AI가 당신의
+          AI Becomes
           <br />
-          <span className="text-primary">트레이딩 파트너</span>가 됩니다
+          Your <span className="text-primary">Trading Partner</span>
         </h1>
 
         <p className="text-muted-foreground text-base md:text-lg mb-10 max-w-md mx-auto leading-relaxed">
-          간단한 설문으로 투자 성향을 분석하고, AI가 자동으로 주식을 거래합니다.
+          Take a quick survey to identify your investment style, and let AI trade stocks automatically for you.
         </p>
 
         <motion.div
@@ -50,7 +50,7 @@ const Index = () => {
             size="lg"
             className="bg-primary text-primary-foreground hover:bg-primary/90 glow-primary text-sm font-semibold px-8 py-6 rounded-xl"
           >
-            시작하기
+            Get Started
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
           <Button
@@ -59,7 +59,7 @@ const Index = () => {
             onClick={() => navigate("/chat")}
             className="text-sm px-6 py-6 rounded-xl border-border/60"
           >
-            대시보드 보기
+            Dashboard
             <BarChart3 className="w-4 h-4 ml-2" />
           </Button>
         </motion.div>
@@ -72,9 +72,9 @@ const Index = () => {
           className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4"
         >
           {[
-            { icon: TrendingUp, label: "자동 매매", desc: "AI 기반 실시간 트레이딩" },
-            { icon: Bot, label: "AI 분석", desc: "시장 데이터 실시간 분석" },
-            { icon: Shield, label: "안전한 거래", desc: "모의투자로 리스크 제로" },
+            { icon: TrendingUp, label: "Auto Trading", desc: "AI-powered real-time trading" },
+            { icon: Bot, label: "AI Analysis", desc: "Real-time market data analysis" },
+            { icon: Shield, label: "Safe Trading", desc: "Zero risk with paper trading" },
           ].map(({ icon: Icon, label, desc }) => (
             <div key={label} className="glass rounded-xl p-5 text-center hover:border-primary/20 transition-colors">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3">

@@ -215,7 +215,7 @@ const Chat = () => {
                       : "border-border/40 bg-muted/30 text-muted-foreground"
                   }`}
                 >
-                  {t.side === "hold" ? "⏸ Hold" : `${t.side === "buy" ? "↑" : "↓"} ${t.symbol} ${t.qty}주`}
+                  {t.side === "hold" ? "⏸ Hold" : `${t.side === "buy" ? "↑" : "↓"} ${t.symbol} ${t.qty} shares`}
                   <span className="text-muted-foreground ml-1.5">
                     {new Date(t.created_at).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
                   </span>
@@ -288,7 +288,7 @@ const Chat = () => {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="메시지를 입력하세요..."
+            placeholder="Type a message..."
             className="bg-muted/40 border-border/40 h-11 rounded-xl text-sm"
             disabled={isLoading}
           />

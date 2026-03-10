@@ -91,7 +91,7 @@ const Onboarding = () => {
 
             {isFreeText ? (
               <Textarea
-                placeholder="여기에 답변을 입력하세요... (선택사항)"
+                placeholder="Type your answer here... (optional)"
                 value={(currentAnswer as string) || ""}
                 onChange={(e) => setAnswers((prev) => ({ ...prev, [question.id]: e.target.value }))}
                 className="bg-muted/30 border-border/40 min-h-[100px] resize-none"
@@ -120,20 +120,20 @@ const Onboarding = () => {
             )}
 
             {(question.id === "Q15" || question.id === "Q18") && (
-              <p className="text-xs text-muted-foreground mt-3">복수 선택 가능</p>
+              <p className="text-xs text-muted-foreground mt-3">Multiple selections allowed</p>
             )}
           </motion.div>
         </AnimatePresence>
 
         <div className="flex justify-between items-center mt-6">
           <Button variant="ghost" onClick={handleBack} disabled={currentIdx === 0} className="text-muted-foreground">
-            <ArrowLeft className="w-4 h-4 mr-2" /> 이전
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
           <Button variant="ghost" onClick={handleSkip} className="text-muted-foreground text-sm">
-            건너뛰기
+            Skip Survey
           </Button>
           <Button onClick={handleNext} disabled={!hasAnswer && !isFreeText} className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
-            {currentIdx === total - 1 ? "완료" : "다음"}
+            {currentIdx === total - 1 ? "Done" : "Next"}
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>

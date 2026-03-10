@@ -71,7 +71,7 @@ const TradeHistory = () => {
         <Button variant="ghost" size="icon" onClick={() => navigate("/chat")} className="w-8 h-8 rounded-lg">
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="font-semibold text-sm">거래 내역</h1>
+        <h1 className="font-semibold text-sm">Trade History</h1>
         <Button variant="ghost" size="icon" onClick={() => { loadTrades(); loadAccount(); }} className="ml-auto w-8 h-8 rounded-lg">
           <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
         </Button>
@@ -110,7 +110,7 @@ const TradeHistory = () => {
                   <div key={pos.symbol} className="px-3 py-2 rounded-lg bg-muted/30 border border-border/30">
                     <div className="flex items-center justify-between mb-0.5">
                       <span className="text-xs font-mono font-bold text-foreground">{pos.symbol}</span>
-                      <span className="text-[10px] text-muted-foreground">{pos.qty}주</span>
+                      <span className="text-[10px] text-muted-foreground">{pos.qty} shares</span>
                     </div>
                     <p className="text-[10px] text-muted-foreground font-mono">
                       ${parseFloat(pos.avg_entry_price).toFixed(2)} → ${parseFloat(pos.current_price).toFixed(2)}
@@ -129,10 +129,10 @@ const TradeHistory = () => {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-2 px-4 py-2">
         {[
-          { label: "전체", value: stats.total, color: "text-foreground" },
-          { label: "매수", value: stats.buys, color: "text-chart-up" },
-          { label: "매도", value: stats.sells, color: "text-chart-down" },
-          { label: "보류", value: stats.holds, color: "text-muted-foreground" },
+          { label: "All", value: stats.total, color: "text-foreground" },
+          { label: "Buy", value: stats.buys, color: "text-chart-up" },
+          { label: "Sell", value: stats.sells, color: "text-chart-down" },
+          { label: "Hold", value: stats.holds, color: "text-muted-foreground" },
         ].map((s) => (
           <div key={s.label} className="bg-card border border-border/40 rounded-xl p-3 text-center">
             <p className={`text-lg font-bold font-mono ${s.color}`}>{s.value}</p>
@@ -153,7 +153,7 @@ const TradeHistory = () => {
                 : "bg-muted/40 text-muted-foreground hover:bg-muted/60"
             }`}
           >
-            {f === "all" ? "전체" : f === "buy" ? "매수" : f === "sell" ? "매도" : "보류"}
+            {f === "all" ? "All" : f === "buy" ? "Buy" : f === "sell" ? "Sell" : "Hold"}
           </button>
         ))}
       </div>
@@ -162,7 +162,7 @@ const TradeHistory = () => {
       <ScrollArea className="flex-1 px-4">
         <div className="space-y-2 pb-4">
           {trades.length === 0 && !loading && (
-            <div className="text-center py-12 text-muted-foreground text-sm">거래 내역이 없습니다</div>
+            <div className="text-center py-12 text-muted-foreground text-sm">No trade history yet</div>
           )}
           {trades.map((t) => (
             <div key={t.id} className="bg-card border border-border/40 rounded-xl p-4 flex items-start gap-3">
@@ -190,12 +190,12 @@ const TradeHistory = () => {
                     )}
                   </div>
                   <span className="text-[10px] text-muted-foreground font-mono">
-                    {new Date(t.created_at).toLocaleDateString("ko-KR", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    {new Date(t.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
                 {t.side !== "hold" && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    {t.qty}주{t.price ? ` · $${Number(t.price).toFixed(2)}` : ""}
+                    {t.qty} shares{t.price ? ` · $${Number(t.price).toFixed(2)}` : ""}
                   </p>
                 )}
                 {t.reason && (
