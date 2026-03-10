@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
-import { Send, Bot, User, TrendingUp, Loader2, Zap, History } from "lucide-react";
+import { Send, Bot, User, TrendingUp, Loader2, Zap, History, UserCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import StockChart from "@/components/StockChart";
@@ -226,6 +226,15 @@ const Chat = () => {
             title="Trade History"
           >
             <History className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/profile")}
+            className="w-8 h-8"
+            title="Profile"
+          >
+            <UserCircle className="w-4 h-4" />
           </Button>
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${autoTradeEnabled ? "bg-primary animate-pulse" : "bg-muted-foreground"}`} />
