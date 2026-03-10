@@ -13,6 +13,7 @@ type Answer = string | string[];
 
 const Onboarding = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [answers, setAnswers] = useState<Record<string, Answer>>({});
 
   const allQuestions = useMemo(() => questionsData.sections.flatMap((s) => s.questions), []);
