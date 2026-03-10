@@ -59,7 +59,7 @@ const Index = () => {
             onClick={() => navigate("/chat")}
             className="text-sm px-6 py-6 rounded-xl border-border/60"
           >
-            대시보드 보기
+            Dashboard
             <BarChart3 className="w-4 h-4 ml-2" />
           </Button>
         </motion.div>
