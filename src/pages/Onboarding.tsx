@@ -120,7 +120,7 @@ const Onboarding = () => {
             )}
 
             {(question.id === "Q15" || question.id === "Q18") && (
-              <p className="text-xs text-muted-foreground mt-3">복수 선택 가능</p>
+              <p className="text-xs text-muted-foreground mt-3">Multiple selections allowed</p>
             )}
           </motion.div>
         </AnimatePresence>
