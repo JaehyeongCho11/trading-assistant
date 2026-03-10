@@ -50,7 +50,7 @@ const Index = () => {
             size="lg"
             className="bg-primary text-primary-foreground hover:bg-primary/90 glow-primary text-sm font-semibold px-8 py-6 rounded-xl"
           >
-            시작하기
+            Get Started
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
           <Button
