@@ -18,18 +18,11 @@ const Profile = () => {
   const [strategyPrompt, setStrategyPrompt] = useState("");
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, any>>({});
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
+  useEffect(() => { loadProfile(); }, []);
 
   const loadProfile = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("trading_profiles")
-      .select("*")
-      .eq("profile_key", "default")
-      .single();
-
+    const { data } = await supabase.from("trading_profiles").select("*").eq("profile_key", "default").single();
     if (data) {
       setAutoTradeEnabled(data.auto_trade_enabled);
       setMaxTradeAmount(String(data.max_trade_amount || 1000));
@@ -41,79 +34,69 @@ const Profile = () => {
 
   const saveProfile = async () => {
     setSaving(true);
-    const { error } = await supabase
-      .from("trading_profiles")
-      .update({
-        auto_trade_enabled: autoTradeEnabled,
-        max_trade_amount: parseFloat(maxTradeAmount) || 1000,
-        strategy_prompt: strategyPrompt,
-      })
-      .eq("profile_key", "default");
-
+    const { error } = await supabase.from("trading_profiles").update({
+      auto_trade_enabled: autoTradeEnabled,
+      max_trade_amount: parseFloat(maxTradeAmount) || 1000,
+      strategy_prompt: strategyPrompt,
+    }).eq("profile_key", "default");
     if (error) {
-      toast({ variant: "destructive", title: "Error", description: "Failed to save profile." });
+      toast({ variant: "destructive", title: "오류", description: "프로필 저장에 실패했습니다." });
     } else {
-      toast({ title: "Saved", description: "Profile updated successfully." });
+      toast({ title: "저장 완료", description: "프로필이 업데이트되었습니다." });
     }
     setSaving(false);
   };
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center">
+      <div className="h-screen flex items-center justify-center bg-background">
         <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <div className="glass border-b border-border/50 px-6 py-3 flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/chat")} className="w-8 h-8">
+      <div className="border-b border-border/40 bg-card/60 backdrop-blur-lg px-5 py-3 flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={() => navigate("/chat")} className="w-8 h-8 rounded-lg">
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="font-semibold text-sm">Trading Profile</h1>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={saveProfile}
-          disabled={saving}
-          className="ml-auto w-8 h-8"
-        >
+        <h1 className="font-semibold text-sm">트레이딩 프로필</h1>
+        <Button variant="ghost" size="icon" onClick={saveProfile} disabled={saving} className="ml-auto w-8 h-8 rounded-lg">
           <Save className={`w-4 h-4 ${saving ? "animate-pulse" : ""}`} />
         </Button>
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="p-4 space-y-6 max-w-lg mx-auto">
+        <div className="p-4 space-y-4 max-w-lg mx-auto">
           {/* Auto Trade */}
-          <div className="glass rounded-xl p-4">
-            <div className="flex items-center gap-3 mb-1">
-              <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center">
+          <div className="bg-card border border-border/40 rounded-xl p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Zap className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-foreground">Auto Trading</p>
-                <p className="text-[10px] text-muted-foreground">Enable AI-powered autonomous trading</p>
+                <p className="text-sm font-semibold text-foreground">자동 매매</p>
+                <p className="text-[11px] text-muted-foreground">AI가 자율적으로 트레이딩합니다</p>
               </div>
               <Switch checked={autoTradeEnabled} onCheckedChange={setAutoTradeEnabled} />
             </div>
           </div>
 
           {/* Max Trade Amount */}
-          <div className="glass rounded-xl p-4">
+          <div className="bg-card border border-border/40 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
                 <DollarSign className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">Max Trade Amount</p>
-                <p className="text-[10px] text-muted-foreground">Maximum amount per trade in USD</p>
+                <p className="text-sm font-semibold text-foreground">최대 거래 금액</p>
+                <p className="text-[11px] text-muted-foreground">1회 거래 최대 금액 (USD)</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">$</span>
+              <span className="text-sm text-muted-foreground font-medium">$</span>
               <Input
                 type="number"
                 value={maxTradeAmount}
@@ -125,61 +108,56 @@ const Profile = () => {
           </div>
 
           {/* Strategy */}
-          <div className="glass rounded-xl p-4">
+          <div className="bg-card border border-border/40 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Brain className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">Trading Strategy</p>
-                <p className="text-[10px] text-muted-foreground">Custom instructions for the AI trader</p>
+                <p className="text-sm font-semibold text-foreground">투자 전략</p>
+                <p className="text-[11px] text-muted-foreground">AI 트레이더에게 전달할 커스텀 지시사항</p>
               </div>
             </div>
             <textarea
               value={strategyPrompt}
               onChange={(e) => setStrategyPrompt(e.target.value)}
               rows={4}
-              className="w-full rounded-lg border border-border/50 bg-secondary/30 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
-              placeholder="e.g. Focus on tech stocks, be conservative with risk..."
+              className="w-full rounded-lg border border-border/40 bg-muted/30 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none transition-shadow"
+              placeholder="예: 기술주 중심으로, 보수적으로 투자..."
             />
           </div>
 
           {/* Survey Answers */}
           {Object.keys(surveyAnswers).length > 0 && (
-            <div className="glass rounded-xl p-4">
+            <div className="bg-card border border-border/40 rounded-xl p-4">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
                   <User className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Survey Responses</p>
-                  <p className="text-[10px] text-muted-foreground">Your onboarding preferences</p>
+                  <p className="text-sm font-semibold text-foreground">설문 응답</p>
+                  <p className="text-[11px] text-muted-foreground">온보딩 시 설정한 투자 성향</p>
                 </div>
               </div>
               <div className="space-y-2">
                 {Object.entries(surveyAnswers).map(([key, value]) => (
                   <div key={key} className="flex items-start gap-2 text-xs">
-                    <span className="text-muted-foreground min-w-[80px]">{key}:</span>
+                    <span className="text-muted-foreground min-w-[80px] font-medium">{key}:</span>
                     <span className="text-foreground font-mono">
                       {Array.isArray(value) ? value.join(", ") : String(value)}
                     </span>
                   </div>
                 ))}
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-3 text-xs"
-                onClick={() => navigate("/onboarding")}
-              >
-                Retake Survey
+              <Button variant="outline" size="sm" className="mt-3 text-xs" onClick={() => navigate("/onboarding")}>
+                설문 다시하기
               </Button>
             </div>
           )}
 
           {/* Save Button */}
-          <Button onClick={saveProfile} disabled={saving} className="w-full">
-            {saving ? "Saving..." : "Save Changes"}
+          <Button onClick={saveProfile} disabled={saving} className="w-full h-11 rounded-xl font-semibold">
+            {saving ? "저장 중..." : "변경사항 저장"}
           </Button>
         </div>
       </ScrollArea>
