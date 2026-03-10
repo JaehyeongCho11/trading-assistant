@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import ReactMarkdown from "react-markdown";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -11,6 +11,22 @@ import { useNavigate } from "react-router-dom";
 import StockChart from "@/components/StockChart";
 import AccountBanner from "@/components/AccountBanner";
 import { useToast } from "@/hooks/use-toast";
+
+function simpleMarkdown(text: string): string {
+  return text
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
+    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
+    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
+    .replace(/^- (.+)$/gm, "<li>$1</li>")
+    .replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`)
+    .replace(/\n\n/g, "</p><p>")
+    .replace(/\n/g, "<br/>")
+    .replace(/^/, "<p>").replace(/$/, "</p>");
+}
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -276,9 +292,10 @@ const Chat = () => {
                   }`}
                 >
                   {msg.role === "assistant" ? (
-                    <div className="prose prose-sm prose-invert max-w-none [&_p]:mb-2 [&_li]:mb-1">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
-                    </div>
+                    <div
+                      className="prose prose-sm prose-invert max-w-none [&_p]:mb-2 [&_li]:mb-1"
+                      dangerouslySetInnerHTML={{ __html: simpleMarkdown(msg.content) }}
+                    />
                   ) : (
                     msg.content
                   )}
