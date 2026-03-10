@@ -150,7 +150,7 @@ const Profile = () => {
                 ))}
               </div>
               <Button variant="outline" size="sm" className="mt-3 text-xs" onClick={() => navigate("/onboarding")}>
-                설문 다시하기
+                Retake Survey
               </Button>
             </div>
           )}
