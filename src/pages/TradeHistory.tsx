@@ -129,10 +129,10 @@ const TradeHistory = () => {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-2 px-4 py-2">
         {[
-          { label: "전체", value: stats.total, color: "text-foreground" },
-          { label: "매수", value: stats.buys, color: "text-chart-up" },
-          { label: "매도", value: stats.sells, color: "text-chart-down" },
-          { label: "보류", value: stats.holds, color: "text-muted-foreground" },
+          { label: "All", value: stats.total, color: "text-foreground" },
+          { label: "Buy", value: stats.buys, color: "text-chart-up" },
+          { label: "Sell", value: stats.sells, color: "text-chart-down" },
+          { label: "Hold", value: stats.holds, color: "text-muted-foreground" },
         ].map((s) => (
           <div key={s.label} className="bg-card border border-border/40 rounded-xl p-3 text-center">
             <p className={`text-lg font-bold font-mono ${s.color}`}>{s.value}</p>
