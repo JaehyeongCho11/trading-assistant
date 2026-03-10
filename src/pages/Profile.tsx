@@ -24,8 +24,9 @@ const Profile = () => {
   useEffect(() => { loadProfile(); }, []);
 
   const loadProfile = async () => {
+    if (!user) return;
     setLoading(true);
-    const { data } = await supabase.from("trading_profiles").select("*").eq("profile_key", "default").single();
+    const { data } = await supabase.from("trading_profiles").select("*").eq("user_id", user.id).single();
     if (data) {
       setAutoTradeEnabled(data.auto_trade_enabled);
       setMaxTradeAmount(String(data.max_trade_amount || 1000));
