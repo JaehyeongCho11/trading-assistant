@@ -104,7 +104,8 @@ const Chat = () => {
 
   useEffect(() => {
     const loadStatus = async () => {
-      const { data: prof } = await supabase.from("trading_profiles").select("auto_trade_enabled").eq("profile_key", "default").single();
+      if (!user) return;
+      const { data: prof } = await supabase.from("trading_profiles").select("auto_trade_enabled").eq("user_id", user.id).single();
       if (prof) setAutoTradeEnabled(prof.auto_trade_enabled);
       const { data: trades } = await supabase.from("trade_history").select("*").order("created_at", { ascending: false }).limit(5);
       if (trades) setRecentTrades(trades);
