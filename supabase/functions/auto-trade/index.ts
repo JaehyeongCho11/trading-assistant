@@ -116,12 +116,12 @@ Respond with a JSON object:
   "action": "buy" | "sell" | "hold",
   "symbol": "TICKER",
   "qty": number,
-  "reason": "brief explanation in Korean",
+  "reason": "brief explanation in English",
   "order_type": "market" | "limit",
   "limit_price": number (optional, for limit orders)
 }
 
-If no trade is needed, respond with: {"action": "hold", "reason": "explanation in Korean"}`;
+If no trade is needed, respond with: {"action": "hold", "reason": "explanation in English"}`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -155,7 +155,7 @@ If no trade is needed, respond with: {"action": "hold", "reason": "explanation i
       decision = JSON.parse(content);
     } catch {
       console.error("Failed to parse AI decision:", content);
-      decision = { action: "hold", reason: "AI 응답 파싱 실패" };
+      decision = { action: "hold", reason: "Failed to parse AI response" };
     }
 
     console.log("AI Trading Decision:", decision);
