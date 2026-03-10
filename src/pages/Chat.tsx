@@ -88,6 +88,7 @@ async function streamChat({
 const Chat = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Msg[]>(() => {
     try { const saved = sessionStorage.getItem("chatMessages"); return saved ? JSON.parse(saved) : []; }
     catch { return []; }
