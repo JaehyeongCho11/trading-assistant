@@ -62,7 +62,7 @@ const Profile = () => {
         <Button variant="ghost" size="icon" onClick={() => navigate("/chat")} className="w-8 h-8 rounded-lg">
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="font-semibold text-sm">트레이딩 프로필</h1>
+        <h1 className="font-semibold text-sm">Trading Profile</h1>
         <Button variant="ghost" size="icon" onClick={saveProfile} disabled={saving} className="ml-auto w-8 h-8 rounded-lg">
           <Save className={`w-4 h-4 ${saving ? "animate-pulse" : ""}`} />
         </Button>
