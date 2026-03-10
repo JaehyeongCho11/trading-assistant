@@ -38,13 +38,14 @@ const Profile = () => {
   };
 
   const saveProfile = async () => {
+    if (!user) return;
     setSaving(true);
     const { error } = await supabase.from("trading_profiles").update({
       auto_trade_enabled: autoTradeEnabled,
       max_trade_amount: parseFloat(maxTradeAmount) || 1000,
       strategy_prompt: strategyPrompt,
       trade_interval_minutes: parseInt(tradeInterval) || 5,
-    } as any).eq("profile_key", "default");
+    } as any).eq("user_id", user.id);
     if (error) {
       toast({ variant: "destructive", title: "Error", description: "Failed to save profile." });
     } else {
