@@ -90,6 +90,31 @@ const tools = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "update_profile",
+      description: "Update the user's trading profile when they express a change in strategy, risk tolerance, or trading preferences during conversation. Call this automatically when you detect the user wants to change their approach.",
+      parameters: {
+        type: "object",
+        properties: {
+          strategy_prompt: {
+            type: "string",
+            description: "Updated trading strategy description reflecting the user's new preferences",
+          },
+          max_trade_amount: {
+            type: "number",
+            description: "Updated maximum trade amount in USD if the user mentions changing it",
+          },
+          auto_trade_enabled: {
+            type: "boolean",
+            description: "Whether auto-trading should be enabled/disabled if user mentions it",
+          },
+        },
+        required: ["strategy_prompt"],
+      },
+    },
+  },
 ];
 
 async function executeTool(name: string, args: Record<string, unknown>) {
