@@ -222,7 +222,7 @@ User's trading profile is stored and informs your recommendations.`;
 
     // First call - may trigger tool use
     let aiMessages = [
-      { role: "system", content: systemPrompt },
+      { role: "system", content: fullSystemPrompt },
       ...messages,
     ];
 
