@@ -148,10 +148,25 @@ async function executeTool(name: string, args: Record<string, unknown>) {
           },
         }
       ).then((r) => r.json());
-    default:
-      return { error: "Unknown tool" };
-  }
-}
+    case "update_profile": {
+      const sb = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      );
+      const updateData: Record<string, unknown> = {
+        strategy_prompt: args.strategy_prompt,
+      };
+      if (args.max_trade_amount !== undefined) updateData.max_trade_amount = args.max_trade_amount;
+      if (args.auto_trade_enabled !== undefined) updateData.auto_trade_enabled = args.auto_trade_enabled;
+      
+      const { error } = await sb
+        .from("trading_profiles")
+        .update(updateData)
+        .eq("profile_key", "default");
+      
+      if (error) return { error: error.message };
+      return { success: true, updated: updateData };
+    }
 
 serve(async (req) => {
   if (req.method === "OPTIONS")
