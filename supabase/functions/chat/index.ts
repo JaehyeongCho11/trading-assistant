@@ -167,6 +167,10 @@ async function executeTool(name: string, args: Record<string, unknown>) {
       if (error) return { error: error.message };
       return { success: true, updated: updateData };
     }
+    default:
+      return { error: "Unknown tool" };
+  }
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS")
