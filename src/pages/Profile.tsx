@@ -87,6 +87,43 @@ const Profile = () => {
             </div>
           </div>
 
+          {/* Trade Interval */}
+          <div className="bg-card border border-border/40 rounded-xl p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Clock className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Trading Interval</p>
+                <p className="text-[11px] text-muted-foreground">How often the AI analyzes and trades</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { value: "1", label: "1 min" },
+                { value: "5", label: "5 min" },
+                { value: "10", label: "10 min" },
+                { value: "15", label: "15 min" },
+                { value: "30", label: "30 min" },
+                { value: "60", label: "1 hr" },
+                { value: "120", label: "2 hr" },
+                { value: "240", label: "4 hr" },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setTradeInterval(opt.value)}
+                  className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                    tradeInterval === opt.value
+                      ? "bg-primary/15 text-primary border border-primary/25"
+                      : "bg-muted/40 text-muted-foreground hover:bg-muted/60 border border-transparent"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Max Trade Amount */}
           <div className="bg-card border border-border/40 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-3">
