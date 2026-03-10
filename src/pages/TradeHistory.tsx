@@ -4,6 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, RefreshCw, TrendingUp, TrendingDown, Pause, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const MARKET_DATA_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/market-data`;
 
@@ -13,23 +14,22 @@ type Trade = {
   reason: string | null; status: string | null; created_at: string;
 };
 
-type PositionInfo = {
-  symbol: string; qty: string; market_value: string;
-  unrealized_pl: string; unrealized_plpc: string;
-  current_price: string; avg_entry_price: string;
-};
+type Position = { symbol: string; qty: number; avg_entry_price: number };
 
 const TradeHistory = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [trades, setTrades] = useState<Trade[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "buy" | "sell" | "hold">("all");
-  const [positions, setPositions] = useState<PositionInfo[]>([]);
-  const [accountData, setAccountData] = useState<{ equity: string; daily_change: string; daily_change_pct: string } | null>(null);
+  const [positions, setPositions] = useState<Position[]>([]);
+  const [prices, setPrices] = useState<Record<string, number>>({});
+  const [account, setAccount] = useState<{ balance: number; initial_balance: number } | null>(null);
 
   const loadTrades = async () => {
+    if (!user) return;
     setLoading(true);
-    let query = supabase.from("trade_history").select("*").order("created_at", { ascending: false }).limit(100);
+    let query = supabase.from("trade_history").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(100);
     if (filter !== "all") query = query.eq("side", filter);
     const { data } = await query;
     setTrades((data as Trade[]) || []);
@@ -37,25 +37,46 @@ const TradeHistory = () => {
   };
 
   const loadAccount = async () => {
-    try {
-      const res = await fetch(`${MARKET_DATA_URL}?type=account`, {
-        headers: { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
-      });
-      const json = await res.json();
-      if (!json.error) {
-        setAccountData({ equity: json.equity, daily_change: json.daily_change, daily_change_pct: json.daily_change_pct });
-        setPositions(json.positions || []);
-      }
-    } catch (err) { console.error("Failed to fetch account:", err); }
+    if (!user) return;
+    const [{ data: acc }, { data: posData }] = await Promise.all([
+      supabase.from("user_accounts").select("*").eq("user_id", user.id).single(),
+      supabase.from("user_positions").select("*").eq("user_id", user.id),
+    ]);
+    if (acc) setAccount({ balance: Number(acc.balance), initial_balance: Number(acc.initial_balance) });
+    const pos = (posData || []).filter((p: any) => Number(p.qty) > 0).map((p: any) => ({
+      symbol: p.symbol, qty: Number(p.qty), avg_entry_price: Number(p.avg_entry_price),
+    }));
+    setPositions(pos);
+
+    if (pos.length > 0) {
+      try {
+        const symbols = pos.map((p: Position) => p.symbol).join(",");
+        const res = await fetch(`${MARKET_DATA_URL}?type=quotes&symbols=${symbols}`, {
+          headers: { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+        });
+        const json = await res.json();
+        if (json.quotes) {
+          const priceMap: Record<string, number> = {};
+          for (const [sym, q] of Object.entries(json.quotes as Record<string, any>)) {
+            priceMap[sym] = parseFloat(q.price || q.last || q.close || "0");
+          }
+          setPrices(priceMap);
+        }
+      } catch (err) { console.error("Failed to fetch prices:", err); }
+    }
   };
 
-  useEffect(() => { loadTrades(); }, [filter]);
-  useEffect(() => { loadAccount(); }, []);
+  useEffect(() => { loadTrades(); }, [filter, user]);
+  useEffect(() => { loadAccount(); }, [user]);
 
-  const totalUnrealizedPL = positions.reduce((sum, p) => sum + parseFloat(p.unrealized_pl || "0"), 0);
-  const totalMarketValue = positions.reduce((sum, p) => sum + parseFloat(p.market_value || "0"), 0);
-  const totalReturnPct = totalMarketValue > 0
-    ? ((totalUnrealizedPL / (totalMarketValue - totalUnrealizedPL)) * 100).toFixed(2) : "0.00";
+  const totalUnrealizedPL = positions.reduce((sum, p) => {
+    const price = prices[p.symbol] || p.avg_entry_price;
+    return sum + (price - p.avg_entry_price) * p.qty;
+  }, 0);
+  const positionsValue = positions.reduce((sum, p) => sum + p.qty * (prices[p.symbol] || p.avg_entry_price), 0);
+  const totalEquity = (account?.balance || 0) + positionsValue;
+  const totalReturnPct = account && account.initial_balance > 0
+    ? (((totalEquity - account.initial_balance) / account.initial_balance) * 100).toFixed(2) : "0.00";
 
   const stats = {
     total: trades.length,
@@ -93,18 +114,11 @@ const TradeHistory = () => {
                 ({totalUnrealizedPL >= 0 ? "+" : ""}{totalReturnPct}%)
               </span>
             </div>
-            {accountData && (
-              <div className="flex items-center gap-1 mb-3">
-                <span className="text-[10px] text-muted-foreground font-medium">Today:</span>
-                <span className={`text-xs font-mono font-semibold ${parseFloat(accountData.daily_change) >= 0 ? "text-chart-up" : "text-chart-down"}`}>
-                  {parseFloat(accountData.daily_change) >= 0 ? "+" : ""}{accountData.daily_change} ({parseFloat(accountData.daily_change) >= 0 ? "+" : ""}{accountData.daily_change_pct}%)
-                </span>
-              </div>
-            )}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {positions.map((pos) => {
-                const pl = parseFloat(pos.unrealized_pl);
-                const plPct = (parseFloat(pos.unrealized_plpc) * 100).toFixed(2);
+                const currentPrice = prices[pos.symbol] || pos.avg_entry_price;
+                const pl = (currentPrice - pos.avg_entry_price) * pos.qty;
+                const plPct = pos.avg_entry_price > 0 ? ((currentPrice / pos.avg_entry_price - 1) * 100).toFixed(2) : "0.00";
                 const isPositive = pl >= 0;
                 return (
                   <div key={pos.symbol} className="px-3 py-2 rounded-lg bg-muted/30 border border-border/30">
@@ -113,7 +127,7 @@ const TradeHistory = () => {
                       <span className="text-[10px] text-muted-foreground">{pos.qty} shares</span>
                     </div>
                     <p className="text-[10px] text-muted-foreground font-mono">
-                      ${parseFloat(pos.current_price).toFixed(2)}
+                      ${currentPrice.toFixed(2)}
                     </p>
                     <p className={`text-xs font-mono font-semibold ${isPositive ? "text-chart-up" : "text-chart-down"}`}>
                       {isPositive ? "+" : ""}${pl.toFixed(2)} ({isPositive ? "+" : ""}{plPct}%)

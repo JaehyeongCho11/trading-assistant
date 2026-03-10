@@ -7,38 +7,19 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const ALPACA_BASE = "https://paper-api.alpaca.markets";
-
-async function alpacaRequest(path: string, method = "GET", body?: unknown) {
-  const key = Deno.env.get("ALPACA_API_KEY");
-  const secret = Deno.env.get("ALPACA_SECRET_KEY");
-  if (!key || !secret) throw new Error("Alpaca API keys not configured");
-
-  const res = await fetch(`${ALPACA_BASE}${path}`, {
-    method,
-    headers: {
-      "APCA-API-KEY-ID": key,
-      "APCA-API-SECRET-KEY": secret,
-      "Content-Type": "application/json",
-    },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
-  return res.json();
-}
-
 async function getQuote(symbol: string) {
   const key = Deno.env.get("ALPACA_API_KEY")!;
   const secret = Deno.env.get("ALPACA_SECRET_KEY")!;
   const res = await fetch(
     `https://data.alpaca.markets/v2/stocks/${symbol}/quotes/latest`,
-    {
-      headers: {
-        "APCA-API-KEY-ID": key,
-        "APCA-API-SECRET-KEY": secret,
-      },
-    }
+    { headers: { "APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": secret } }
   );
   return res.json();
+}
+
+async function getPrice(symbol: string): Promise<number> {
+  const q = await getQuote(symbol);
+  return parseFloat(q?.quote?.ap || q?.quote?.bp || "0");
 }
 
 serve(async (req) => {
@@ -53,73 +34,82 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get active trading profile
-    const { data: profile } = await supabase
+    // Get ALL active trading profiles (all users)
+    const { data: profiles } = await supabase
       .from("trading_profiles")
       .select("*")
-      .eq("profile_key", "default")
-      .eq("auto_trade_enabled", true)
-      .single();
+      .eq("auto_trade_enabled", true);
 
-    if (!profile) {
-      return new Response(JSON.stringify({ message: "No active trading profile" }), {
+    if (!profiles || profiles.length === 0) {
+      return new Response(JSON.stringify({ message: "No active trading profiles" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Check if enough time has passed since last trade based on interval setting
-    const intervalMinutes = profile.trade_interval_minutes || 5;
-    const { data: lastTrade } = await supabase
-      .from("trade_history")
-      .select("created_at")
-      .eq("profile_id", profile.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
+    const results = [];
 
-    if (lastTrade) {
-      const lastTradeTime = new Date(lastTrade.created_at).getTime();
-      const now = Date.now();
-      const elapsedMinutes = (now - lastTradeTime) / 60000;
-      if (elapsedMinutes < intervalMinutes) {
-        return new Response(JSON.stringify({
-          message: `Skipping — only ${elapsedMinutes.toFixed(1)} min since last trade (interval: ${intervalMinutes} min)`,
-        }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+    for (const profile of profiles) {
+      if (!profile.user_id) continue;
+
+      // Check interval
+      const intervalMinutes = profile.trade_interval_minutes || 5;
+      const { data: lastTrade } = await supabase
+        .from("trade_history")
+        .select("created_at")
+        .eq("user_id", profile.user_id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (lastTrade) {
+        const elapsed = (Date.now() - new Date(lastTrade.created_at).getTime()) / 60000;
+        if (elapsed < intervalMinutes) {
+          results.push({ user_id: profile.user_id, skipped: true, elapsed: elapsed.toFixed(1) });
+          continue;
+        }
       }
-    }
 
-    // Get current account & positions
-    const [account, positions] = await Promise.all([
-      alpacaRequest("/v2/account"),
-      alpacaRequest("/v2/positions"),
-    ]);
+      // Get user's virtual account & positions
+      const [{ data: account }, { data: positions }] = await Promise.all([
+        supabase.from("user_accounts").select("*").eq("user_id", profile.user_id).single(),
+        supabase.from("user_positions").select("*").eq("user_id", profile.user_id),
+      ]);
 
-    // Get quotes for popular symbols
-    const symbols = ["SPY", "QQQ", "AAPL", "TSLA", "NVDA", "MSFT"];
-    const quotes: Record<string, unknown> = {};
-    for (const sym of symbols) {
-      try {
-        quotes[sym] = await getQuote(sym);
-      } catch { /* skip */ }
-    }
+      if (!account) continue;
 
-    // Ask AI for trading decision
-    const aiPrompt = `You are an autonomous AI trading assistant managing an Alpaca Paper Trading account.
+      const balance = parseFloat(account.balance);
+      const userPositions = positions || [];
 
-## Current Account
-- Cash: $${account.cash}
-- Portfolio Value: $${account.portfolio_value}
-- Buying Power: $${account.buying_power}
+      // Get quotes for popular symbols + held positions
+      const heldSymbols = userPositions.map((p: any) => p.symbol);
+      const defaultSymbols = ["SPY", "QQQ", "AAPL", "TSLA", "NVDA", "MSFT"];
+      const allSymbols = [...new Set([...defaultSymbols, ...heldSymbols])];
+      
+      const quotes: Record<string, number> = {};
+      for (const sym of allSymbols) {
+        try { quotes[sym] = await getPrice(sym); } catch { /* skip */ }
+      }
+
+      // Ask AI
+      const positionsStr = userPositions.length > 0
+        ? userPositions.map((p: any) => {
+            const price = quotes[p.symbol] || parseFloat(p.avg_entry_price);
+            const pl = (price - parseFloat(p.avg_entry_price)) * parseFloat(p.qty);
+            return `- ${p.symbol}: ${p.qty} shares @ $${parseFloat(p.avg_entry_price).toFixed(2)}, Current: $${price.toFixed(2)}, P&L: $${pl.toFixed(2)}`;
+          }).join("\n")
+        : "No open positions";
+
+      const aiPrompt = `You are an autonomous AI trading assistant managing a virtual paper trading account.
+
+## Account
+- Cash Balance: $${balance.toFixed(2)}
+- Max Trade Amount: $${profile.max_trade_amount}
 
 ## Current Positions
-${positions.length > 0
-  ? positions.map((p: any) => `- ${p.symbol}: ${p.qty} shares, P&L: $${p.unrealized_pl} (${p.unrealized_plpc}%)`).join("\n")
-  : "No open positions"}
+${positionsStr}
 
-## Latest Quotes
-${Object.entries(quotes).map(([sym, q]: [string, any]) => `- ${sym}: Ask $${q?.quote?.ap || "N/A"}, Bid $${q?.quote?.bp || "N/A"}`).join("\n")}
+## Market Quotes
+${Object.entries(quotes).map(([sym, price]) => `- ${sym}: $${price.toFixed(2)}`).join("\n")}
 
 ## User Profile
 ${JSON.stringify(profile.survey_answers || {})}
@@ -128,109 +118,124 @@ ${JSON.stringify(profile.survey_answers || {})}
 ${profile.strategy_prompt}
 
 ## Rules
-- Max trade amount: $${profile.max_trade_amount}
-- Only trade during market hours
+- You can buy if cash balance allows it
+- You can sell only shares you hold
 - Be conservative and risk-aware
-- Consider the user's risk tolerance from their profile
+- Consider the user's risk tolerance
 
-Based on current market data and the user's profile, decide what action to take.
-Respond with a JSON object:
-{
-  "action": "buy" | "sell" | "hold",
-  "symbol": "TICKER",
-  "qty": number,
-  "reason": "brief explanation in English",
-  "order_type": "market" | "limit",
-  "limit_price": number (optional, for limit orders)
-}
+Respond with JSON only:
+{"action": "buy"|"sell"|"hold", "symbol": "TICKER", "qty": number, "reason": "brief explanation in English"}`;
 
-If no trade is needed, respond with: {"action": "hold", "reason": "explanation in English"}`;
+      const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages: [
+            { role: "system", content: "You are a trading AI. Always respond with valid JSON only." },
+            { role: "user", content: aiPrompt },
+          ],
+        }),
+      });
 
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: "You are a trading AI. Always respond with valid JSON only." },
-          { role: "user", content: aiPrompt },
-        ],
-      }),
-    });
+      if (!aiResponse.ok) {
+        console.error("AI error for user", profile.user_id, await aiResponse.text());
+        continue;
+      }
 
-    if (!aiResponse.ok) {
-      const errText = await aiResponse.text();
-      console.error("AI error:", aiResponse.status, errText);
-      throw new Error(`AI gateway error: ${aiResponse.status}`);
-    }
+      const aiData = await aiResponse.json();
+      let content = aiData.choices?.[0]?.message?.content || "";
+      content = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
 
-    const aiData = await aiResponse.json();
-    let content = aiData.choices?.[0]?.message?.content || "";
-    
-    // Strip markdown code fences if present
-    content = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-    
-    let decision;
-    try {
-      decision = JSON.parse(content);
-    } catch {
-      console.error("Failed to parse AI decision:", content);
-      decision = { action: "hold", reason: "Failed to parse AI response" };
-    }
+      let decision;
+      try { decision = JSON.parse(content); } catch {
+        decision = { action: "hold", reason: "Failed to parse AI response" };
+      }
 
-    console.log("AI Trading Decision:", decision);
+      console.log(`User ${profile.user_id} decision:`, decision);
 
-    // Execute trade if not hold
-    let orderResult = null;
-    if (decision.action !== "hold" && decision.symbol && decision.qty > 0) {
-      const order: Record<string, unknown> = {
-        symbol: decision.symbol,
-        qty: decision.qty,
+      // Execute virtual trade
+      let tradePrice = 0;
+      if (decision.action !== "hold" && decision.symbol && decision.qty > 0) {
+        tradePrice = quotes[decision.symbol] || await getPrice(decision.symbol);
+        const totalCost = tradePrice * decision.qty;
+
+        if (decision.action === "buy") {
+          if (totalCost > balance) {
+            decision.action = "hold";
+            decision.reason = "Insufficient balance for this trade";
+          } else {
+            // Deduct balance
+            await supabase.from("user_accounts").update({
+              balance: balance - totalCost,
+            }).eq("user_id", profile.user_id);
+
+            // Upsert position
+            const existing = userPositions.find((p: any) => p.symbol === decision.symbol);
+            if (existing) {
+              const oldQty = parseFloat(existing.qty);
+              const oldAvg = parseFloat(existing.avg_entry_price);
+              const newQty = oldQty + decision.qty;
+              const newAvg = (oldAvg * oldQty + tradePrice * decision.qty) / newQty;
+              await supabase.from("user_positions").update({
+                qty: newQty, avg_entry_price: newAvg,
+              }).eq("user_id", profile.user_id).eq("symbol", decision.symbol);
+            } else {
+              await supabase.from("user_positions").insert({
+                user_id: profile.user_id, symbol: decision.symbol,
+                qty: decision.qty, avg_entry_price: tradePrice,
+              });
+            }
+          }
+        } else if (decision.action === "sell") {
+          const existing = userPositions.find((p: any) => p.symbol === decision.symbol);
+          if (!existing || parseFloat(existing.qty) < decision.qty) {
+            decision.action = "hold";
+            decision.reason = "Insufficient shares to sell";
+          } else {
+            const newQty = parseFloat(existing.qty) - decision.qty;
+            // Add proceeds to balance
+            await supabase.from("user_accounts").update({
+              balance: balance + totalCost,
+            }).eq("user_id", profile.user_id);
+
+            if (newQty <= 0) {
+              await supabase.from("user_positions").delete()
+                .eq("user_id", profile.user_id).eq("symbol", decision.symbol);
+            } else {
+              await supabase.from("user_positions").update({ qty: newQty })
+                .eq("user_id", profile.user_id).eq("symbol", decision.symbol);
+            }
+          }
+        }
+      }
+
+      // Log trade
+      await supabase.from("trade_history").insert({
+        user_id: profile.user_id,
+        profile_id: profile.id,
+        symbol: decision.symbol || "N/A",
         side: decision.action,
-        type: decision.order_type || "market",
-        time_in_force: "day",
-      };
-      if (decision.order_type === "limit" && decision.limit_price) {
-        order.limit_price = decision.limit_price;
-      }
+        qty: decision.qty || 0,
+        price: tradePrice || null,
+        reason: decision.reason,
+        status: decision.action === "hold" ? "hold" : "filled",
+      });
 
-      orderResult = await alpacaRequest("/v2/orders", "POST", order);
-      console.log("Order result:", orderResult);
+      results.push({ user_id: profile.user_id, decision });
     }
 
-    // Log to trade_history
-    await supabase.from("trade_history").insert({
-      profile_id: profile.id,
-      symbol: decision.symbol || "N/A",
-      side: decision.action,
-      qty: decision.qty || 0,
-      price: decision.limit_price || null,
-      order_id: orderResult?.id || null,
-      reason: decision.reason,
-      status: decision.action === "hold" ? "hold" : orderResult?.status || "error",
+    return new Response(JSON.stringify({ results }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-
-    return new Response(
-      JSON.stringify({
-        decision,
-        order: orderResult,
-        account_value: account.portfolio_value,
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
   } catch (e) {
     console.error("auto-trade error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
