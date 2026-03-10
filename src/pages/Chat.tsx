@@ -227,6 +227,15 @@ const Chat = () => {
           >
             <History className="w-4 h-4" />
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/profile")}
+            className="w-8 h-8"
+            title="Profile"
+          >
+            <UserCircle className="w-4 h-4" />
+          </Button>
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${autoTradeEnabled ? "bg-primary animate-pulse" : "bg-muted-foreground"}`} />
             <span className="text-xs text-muted-foreground">{autoTradeEnabled ? "Active" : "Off"}</span>

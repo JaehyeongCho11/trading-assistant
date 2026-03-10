@@ -23,6 +23,7 @@ const App = () => (
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/history" element={<TradeHistory />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
