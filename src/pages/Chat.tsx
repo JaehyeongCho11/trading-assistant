@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Send, Bot, User, TrendingUp, Loader2, Zap, History, UserCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import StockChart from "@/components/StockChart";
 import AccountBanner from "@/components/AccountBanner";
 import { useToast } from "@/hooks/use-toast";
