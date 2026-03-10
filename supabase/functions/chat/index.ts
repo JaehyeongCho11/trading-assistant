@@ -94,7 +94,7 @@ const tools = [
     type: "function",
     function: {
       name: "update_profile",
-      description: "Update the user's trading profile when they express a change in strategy, risk tolerance, or trading preferences during conversation. Call this automatically when you detect the user wants to change their approach.",
+      description: "Update the user's trading profile when they express a change in strategy, risk tolerance, trading preferences, or trading interval during conversation. Call this automatically when you detect the user wants to change their approach.",
       parameters: {
         type: "object",
         properties: {
@@ -109,6 +109,10 @@ const tools = [
           auto_trade_enabled: {
             type: "boolean",
             description: "Whether auto-trading should be enabled/disabled if user mentions it",
+          },
+          trade_interval_minutes: {
+            type: "number",
+            description: "Auto-trading interval in minutes (e.g., 1, 5, 10, 15, 30, 60). Update when user wants to change how frequently the AI trades.",
           },
         },
         required: ["strategy_prompt"],
