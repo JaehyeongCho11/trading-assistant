@@ -195,7 +195,7 @@ const TradeHistory = () => {
                 </div>
                 {t.side !== "hold" && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    {t.qty}주{t.price ? ` · $${Number(t.price).toFixed(2)}` : ""}
+                    {t.qty} shares{t.price ? ` · $${Number(t.price).toFixed(2)}` : ""}
                   </p>
                 )}
                 {t.reason && (
