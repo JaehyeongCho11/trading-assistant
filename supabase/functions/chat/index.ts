@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { knowledgeBase } from "./knowledge.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -211,7 +212,10 @@ You respond in English by default.
 - Provide actionable insights with clear reasoning based on technical and fundamental analysis
 - Always mention relevant risk factors and suggest appropriate position sizing
 
-User's trading profile is stored and informs your recommendations.`;
+User's trading profile is stored and informs your recommendations.
+
+## ADDITIONAL KNOWLEDGE FROM DOCUMENTS
+${knowledgeBase}`;
 
     // First call - may trigger tool use
     let aiMessages = [
