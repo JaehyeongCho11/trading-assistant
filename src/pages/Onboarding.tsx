@@ -45,10 +45,15 @@ const Onboarding = () => {
   };
 
   const finishOnboarding = async () => {
+    if (!user) return;
     localStorage.setItem("tradingProfile", JSON.stringify(answers));
     await supabase.from("trading_profiles").upsert({
-      profile_key: "default", survey_answers: answers, auto_trade_enabled: true, user_id: user?.id,
-    } as any, { onConflict: "profile_key" });
+      profile_key: "default", survey_answers: answers, auto_trade_enabled: true, user_id: user.id,
+    } as any, { onConflict: "user_id,profile_key" });
+    // Ensure user account exists (fallback if trigger didn't fire)
+    await supabase.from("user_accounts").upsert({
+      user_id: user.id, balance: 100000, initial_balance: 100000,
+    } as any, { onConflict: "user_id" });
     navigate("/chat");
   };
 
