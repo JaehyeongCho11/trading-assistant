@@ -203,6 +203,16 @@ const Profile = () => {
           <Button onClick={saveProfile} disabled={saving} className="w-full h-11 rounded-xl font-semibold">
             {saving ? "Saving..." : "Save Changes"}
           </Button>
+
+          {/* Logout */}
+          <Button
+            variant="outline"
+            onClick={async () => { await signOut(); navigate("/auth"); }}
+            className="w-full h-11 rounded-xl text-destructive border-destructive/30 hover:bg-destructive/10"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Sign Out
+          </Button>
         </div>
       </ScrollArea>
     </div>
