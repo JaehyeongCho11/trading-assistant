@@ -155,7 +155,7 @@ If no trade is needed, respond with: {"action": "hold", "reason": "explanation i
       decision = JSON.parse(content);
     } catch {
       console.error("Failed to parse AI decision:", content);
-      decision = { action: "hold", reason: "AI 응답 파싱 실패" };
+      decision = { action: "hold", reason: "Failed to parse AI response" };
     }
 
     console.log("AI Trading Decision:", decision);
