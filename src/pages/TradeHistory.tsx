@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, RefreshCw, TrendingUp, TrendingDown, Pause } from "lucide-react";
+import { ArrowLeft, RefreshCw, TrendingUp, TrendingDown, Pause, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+const MARKET_DATA_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/market-data`;
 
 type Trade = {
   id: string;
@@ -17,11 +19,23 @@ type Trade = {
   created_at: string;
 };
 
+type PositionInfo = {
+  symbol: string;
+  qty: string;
+  market_value: string;
+  unrealized_pl: string;
+  unrealized_plpc: string;
+  current_price: string;
+  avg_entry_price: string;
+};
+
 const TradeHistory = () => {
   const navigate = useNavigate();
   const [trades, setTrades] = useState<Trade[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "buy" | "sell" | "hold">("all");
+  const [positions, setPositions] = useState<PositionInfo[]>([]);
+  const [accountData, setAccountData] = useState<{ equity: string; daily_change: string; daily_change_pct: string } | null>(null);
 
   const loadTrades = async () => {
     setLoading(true);
@@ -40,9 +54,40 @@ const TradeHistory = () => {
     setLoading(false);
   };
 
+  const loadAccount = async () => {
+    try {
+      const res = await fetch(`${MARKET_DATA_URL}?type=account`, {
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+      });
+      const json = await res.json();
+      if (!json.error) {
+        setAccountData({
+          equity: json.equity,
+          daily_change: json.daily_change,
+          daily_change_pct: json.daily_change_pct,
+        });
+        setPositions(json.positions || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch account:", err);
+    }
+  };
+
   useEffect(() => {
     loadTrades();
   }, [filter]);
+
+  useEffect(() => {
+    loadAccount();
+  }, []);
+
+  const totalUnrealizedPL = positions.reduce((sum, p) => sum + parseFloat(p.unrealized_pl || "0"), 0);
+  const totalMarketValue = positions.reduce((sum, p) => sum + parseFloat(p.market_value || "0"), 0);
+  const totalReturnPct = totalMarketValue > 0
+    ? ((totalUnrealizedPL / (totalMarketValue - totalUnrealizedPL)) * 100).toFixed(2)
+    : "0.00";
 
   const stats = {
     total: trades.length,
@@ -59,13 +104,62 @@ const TradeHistory = () => {
           <ArrowLeft className="w-4 h-4" />
         </Button>
         <h1 className="font-semibold text-sm">Trade History</h1>
-        <Button variant="ghost" size="icon" onClick={loadTrades} className="ml-auto w-8 h-8">
+        <Button variant="ghost" size="icon" onClick={() => { loadTrades(); loadAccount(); }} className="ml-auto w-8 h-8">
           <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
         </Button>
       </div>
 
+      {/* Portfolio Returns */}
+      {positions.length > 0 && (
+        <div className="px-4 pt-4 pb-2">
+          <div className="glass rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <BarChart3 className="w-4 h-4 text-primary" />
+              <span className="text-xs font-semibold text-foreground">Portfolio Returns</span>
+            </div>
+            <div className="flex items-baseline gap-2 mb-3">
+              <span className={`text-xl font-bold font-mono ${totalUnrealizedPL >= 0 ? "text-primary" : "text-destructive"}`}>
+                {totalUnrealizedPL >= 0 ? "+" : ""}${totalUnrealizedPL.toFixed(2)}
+              </span>
+              <span className={`text-xs font-mono ${totalUnrealizedPL >= 0 ? "text-primary" : "text-destructive"}`}>
+                ({totalUnrealizedPL >= 0 ? "+" : ""}{totalReturnPct}%)
+              </span>
+            </div>
+            {accountData && (
+              <div className="flex items-center gap-1 mb-3">
+                <span className="text-[10px] text-muted-foreground">Today:</span>
+                <span className={`text-xs font-mono ${parseFloat(accountData.daily_change) >= 0 ? "text-primary" : "text-destructive"}`}>
+                  {parseFloat(accountData.daily_change) >= 0 ? "+" : ""}{accountData.daily_change} ({parseFloat(accountData.daily_change) >= 0 ? "+" : ""}{accountData.daily_change_pct}%)
+                </span>
+              </div>
+            )}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {positions.map((pos) => {
+                const pl = parseFloat(pos.unrealized_pl);
+                const plPct = (parseFloat(pos.unrealized_plpc) * 100).toFixed(2);
+                const isPositive = pl >= 0;
+                return (
+                  <div key={pos.symbol} className="px-3 py-2 rounded-lg bg-secondary/30 border border-border/30">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="text-xs font-mono font-semibold text-foreground">{pos.symbol}</span>
+                      <span className="text-[10px] text-muted-foreground">{pos.qty} shares</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground font-mono">
+                      Avg ${parseFloat(pos.avg_entry_price).toFixed(2)} → ${parseFloat(pos.current_price).toFixed(2)}
+                    </p>
+                    <p className={`text-xs font-mono font-medium ${isPositive ? "text-primary" : "text-destructive"}`}>
+                      {isPositive ? "+" : ""}${pl.toFixed(2)} ({isPositive ? "+" : ""}{plPct}%)
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-2 p-4">
+      <div className="grid grid-cols-4 gap-2 px-4 py-2">
         {[
           { label: "All", value: stats.total, color: "text-foreground" },
           { label: "Buy", value: stats.buys, color: "text-primary" },
@@ -80,7 +174,7 @@ const TradeHistory = () => {
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-2 px-4 pb-3">
+      <div className="flex gap-2 px-4 pb-3 pt-1">
         {(["all", "buy", "sell", "hold"] as const).map((f) => (
           <button
             key={f}
