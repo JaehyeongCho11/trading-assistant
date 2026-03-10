@@ -56,7 +56,7 @@ const Index = () => {
           <Button
             variant="outline"
             size="lg"
-            onClick={() => navigate("/chat")}
+            onClick={() => navigate("/auth")}
             className="text-sm px-6 py-6 rounded-xl border-border/60"
           >
             Dashboard
