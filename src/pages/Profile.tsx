@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [autoTradeEnabled, setAutoTradeEnabled] = useState(true);
