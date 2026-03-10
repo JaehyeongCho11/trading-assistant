@@ -47,8 +47,8 @@ const Onboarding = () => {
   const finishOnboarding = async () => {
     localStorage.setItem("tradingProfile", JSON.stringify(answers));
     await supabase.from("trading_profiles").upsert({
-      profile_key: "default", survey_answers: answers, auto_trade_enabled: true,
-    }, { onConflict: "profile_key" });
+      profile_key: "default", survey_answers: answers, auto_trade_enabled: true, user_id: user?.id,
+    } as any, { onConflict: "profile_key" });
     navigate("/chat");
   };
 
