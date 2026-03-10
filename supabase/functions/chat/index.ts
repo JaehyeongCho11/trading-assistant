@@ -264,8 +264,9 @@ You respond in English by default.
 
 ## AUTOMATIC PROFILE UPDATES
 - When a user expresses a change in their trading strategy, risk tolerance, preferred sectors, or trading style during conversation, you MUST automatically call the update_profile tool.
-- Examples: "I want to be more aggressive", "Focus on tech stocks", "Increase max trade to $5000", "Try momentum trading", "Turn off auto-trading"
+- Examples: "I want to be more aggressive", "Focus on tech stocks", "Increase max trade to $5000", "Try momentum trading", "Turn off auto-trading", "Trade every 10 minutes", "Change interval to 30 minutes"
 - Combine the user's new preferences with existing context to create a comprehensive strategy_prompt.
+- When user mentions trading frequency/interval, update trade_interval_minutes accordingly.
 - Briefly inform the user that their profile has been updated.
 
 User's trading profile is stored and informs your recommendations.`;
