@@ -113,7 +113,7 @@ const TradeHistory = () => {
                       <span className="text-[10px] text-muted-foreground">{pos.qty} shares</span>
                     </div>
                     <p className="text-[10px] text-muted-foreground font-mono">
-                      ${parseFloat(pos.avg_entry_price).toFixed(2)} → ${parseFloat(pos.current_price).toFixed(2)}
+                      {pos.avg_entry_price ? `$${parseFloat(pos.avg_entry_price).toFixed(2)}` : "—"} → ${parseFloat(pos.current_price).toFixed(2)}
                     </p>
                     <p className={`text-xs font-mono font-semibold ${isPositive ? "text-chart-up" : "text-chart-down"}`}>
                       {isPositive ? "+" : ""}${pl.toFixed(2)} ({isPositive ? "+" : ""}{plPct}%)
