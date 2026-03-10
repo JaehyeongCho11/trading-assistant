@@ -34,18 +34,19 @@ type Msg = { role: "user" | "assistant"; content: string };
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
 async function streamChat({
-  messages, onDelta, onDone, onError,
+  messages, onDelta, onDone, onError, accessToken,
 }: {
   messages: Msg[];
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (msg: string) => void;
+  accessToken: string;
 }) {
   const resp = await fetch(CHAT_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({ messages }),
   });
@@ -158,11 +159,13 @@ const Chat = () => {
     };
 
     try {
+      const { data: { session: s } } = await supabase.auth.getSession();
       await streamChat({
         messages: newMessages.filter((m) => m.role !== "assistant" || m.content),
         onDelta: upsertAssistant,
         onDone: () => setIsLoading(false),
         onError: (msg) => { toast({ variant: "destructive", title: "Error", description: msg }); setIsLoading(false); },
+        accessToken: s?.access_token || "",
       });
     } catch {
       toast({ variant: "destructive", title: "Error", description: "A network error occurred." });
