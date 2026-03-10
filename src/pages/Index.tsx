@@ -30,13 +30,13 @@ const Index = () => {
         </motion.div>
 
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
-          AI가 당신의
+          AI Becomes
           <br />
-          <span className="text-primary">트레이딩 파트너</span>가 됩니다
+          Your <span className="text-primary">Trading Partner</span>
         </h1>
 
         <p className="text-muted-foreground text-base md:text-lg mb-10 max-w-md mx-auto leading-relaxed">
-          간단한 설문으로 투자 성향을 분석하고, AI가 자동으로 주식을 거래합니다.
+          Take a quick survey to identify your investment style, and let AI trade stocks automatically for you.
         </p>
 
         <motion.div
