@@ -91,7 +91,7 @@ const Onboarding = () => {
 
             {isFreeText ? (
               <Textarea
-                placeholder="여기에 답변을 입력하세요... (선택사항)"
+                placeholder="Type your answer here... (optional)"
                 value={(currentAnswer as string) || ""}
                 onChange={(e) => setAnswers((prev) => ({ ...prev, [question.id]: e.target.value }))}
                 className="bg-muted/30 border-border/40 min-h-[100px] resize-none"
