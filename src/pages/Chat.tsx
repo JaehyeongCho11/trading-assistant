@@ -113,6 +113,11 @@ const Chat = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const profile = localStorage.getItem("tradingProfile");
 
+  // Persist chat messages to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem("chatMessages", JSON.stringify(messages));
+  }, [messages]);
+
   // Load auto-trade status and recent trades
   useEffect(() => {
     const loadStatus = async () => {
