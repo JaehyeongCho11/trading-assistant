@@ -70,6 +70,7 @@ export type Database = {
           profile_key: string
           strategy_prompt: string | null
           survey_answers: Json | null
+          trade_interval_minutes: number
           updated_at: string
         }
         Insert: {
@@ -80,6 +81,7 @@ export type Database = {
           profile_key?: string
           strategy_prompt?: string | null
           survey_answers?: Json | null
+          trade_interval_minutes?: number
           updated_at?: string
         }
         Update: {
@@ -90,6 +92,7 @@ export type Database = {
           profile_key?: string
           strategy_prompt?: string | null
           survey_answers?: Json | null
+          trade_interval_minutes?: number
           updated_at?: string
         }
         Relationships: []
