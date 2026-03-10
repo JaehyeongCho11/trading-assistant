@@ -135,8 +135,8 @@ const Profile = () => {
                   <User className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">설문 응답</p>
-                  <p className="text-[11px] text-muted-foreground">온보딩 시 설정한 투자 성향</p>
+                  <p className="text-sm font-semibold text-foreground">Survey Responses</p>
+                  <p className="text-[11px] text-muted-foreground">Your onboarding preferences</p>
                 </div>
               </div>
               <div className="space-y-2">
