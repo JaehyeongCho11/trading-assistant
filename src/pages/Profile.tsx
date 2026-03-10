@@ -77,8 +77,8 @@ const Profile = () => {
                 <Zap className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-foreground">자동 매매</p>
-                <p className="text-[11px] text-muted-foreground">AI가 자율적으로 트레이딩합니다</p>
+                <p className="text-sm font-semibold text-foreground">Auto Trading</p>
+                <p className="text-[11px] text-muted-foreground">Enable AI-powered autonomous trading</p>
               </div>
               <Switch checked={autoTradeEnabled} onCheckedChange={setAutoTradeEnabled} />
             </div>
