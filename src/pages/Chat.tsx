@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Send, Bot, User, TrendingUp, Loader2, Zap, History, UserCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import StockChart from "@/components/StockChart";
 import AccountBanner from "@/components/AccountBanner";
 import { useToast } from "@/hooks/use-toast";
@@ -87,6 +88,7 @@ async function streamChat({
 const Chat = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Msg[]>(() => {
     try { const saved = sessionStorage.getItem("chatMessages"); return saved ? JSON.parse(saved) : []; }
     catch { return []; }
@@ -102,7 +104,8 @@ const Chat = () => {
 
   useEffect(() => {
     const loadStatus = async () => {
-      const { data: prof } = await supabase.from("trading_profiles").select("auto_trade_enabled").eq("profile_key", "default").single();
+      if (!user) return;
+      const { data: prof } = await supabase.from("trading_profiles").select("auto_trade_enabled").eq("user_id", user.id).single();
       if (prof) setAutoTradeEnabled(prof.auto_trade_enabled);
       const { data: trades } = await supabase.from("trade_history").select("*").order("created_at", { ascending: false }).limit(5);
       if (trades) setRecentTrades(trades);
@@ -110,11 +113,12 @@ const Chat = () => {
     loadStatus();
     const interval = setInterval(loadStatus, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user]);
 
   const toggleAutoTrade = async (enabled: boolean) => {
+    if (!user) return;
     setAutoTradeEnabled(enabled);
-    await supabase.from("trading_profiles").update({ auto_trade_enabled: enabled }).eq("profile_key", "default");
+    await supabase.from("trading_profiles").update({ auto_trade_enabled: enabled }).eq("user_id", user.id);
     toast({
       title: enabled ? "Auto-Trade Enabled" : "Auto-Trade Disabled",
       description: enabled ? "AI analyzes the market every 5 minutes and trades automatically." : "Auto-trading has been stopped.",

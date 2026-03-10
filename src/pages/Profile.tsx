@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Save, Zap, DollarSign, Brain, RefreshCw, User, Clock } from "lucide-react";
+import { ArrowLeft, Save, Zap, DollarSign, Brain, RefreshCw, User, Clock, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [autoTradeEnabled, setAutoTradeEnabled] = useState(true);
@@ -19,11 +21,12 @@ const Profile = () => {
   const [tradeInterval, setTradeInterval] = useState("5");
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, any>>({});
 
-  useEffect(() => { loadProfile(); }, []);
+  useEffect(() => { loadProfile(); }, [user]);
 
   const loadProfile = async () => {
+    if (!user) return;
     setLoading(true);
-    const { data } = await supabase.from("trading_profiles").select("*").eq("profile_key", "default").single();
+    const { data } = await supabase.from("trading_profiles").select("*").eq("user_id", user.id).single();
     if (data) {
       setAutoTradeEnabled(data.auto_trade_enabled);
       setMaxTradeAmount(String(data.max_trade_amount || 1000));
@@ -35,13 +38,14 @@ const Profile = () => {
   };
 
   const saveProfile = async () => {
+    if (!user) return;
     setSaving(true);
     const { error } = await supabase.from("trading_profiles").update({
       auto_trade_enabled: autoTradeEnabled,
       max_trade_amount: parseFloat(maxTradeAmount) || 1000,
       strategy_prompt: strategyPrompt,
       trade_interval_minutes: parseInt(tradeInterval) || 5,
-    } as any).eq("profile_key", "default");
+    } as any).eq("user_id", user.id);
     if (error) {
       toast({ variant: "destructive", title: "Error", description: "Failed to save profile." });
     } else {
@@ -198,6 +202,16 @@ const Profile = () => {
           {/* Save Button */}
           <Button onClick={saveProfile} disabled={saving} className="w-full h-11 rounded-xl font-semibold">
             {saving ? "Saving..." : "Save Changes"}
+          </Button>
+
+          {/* Logout */}
+          <Button
+            variant="outline"
+            onClick={async () => { await signOut(); navigate("/auth"); }}
+            className="w-full h-11 rounded-xl text-destructive border-destructive/30 hover:bg-destructive/10"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Sign Out
           </Button>
         </div>
       </ScrollArea>

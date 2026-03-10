@@ -46,7 +46,7 @@ const Index = () => {
           className="flex flex-col sm:flex-row items-center gap-3 justify-center"
         >
           <Button
-            onClick={() => navigate("/onboarding")}
+            onClick={() => navigate("/auth")}
             size="lg"
             className="bg-primary text-primary-foreground hover:bg-primary/90 glow-primary text-sm font-semibold px-8 py-6 rounded-xl"
           >
@@ -56,7 +56,7 @@ const Index = () => {
           <Button
             variant="outline"
             size="lg"
-            onClick={() => navigate("/chat")}
+            onClick={() => navigate("/auth")}
             className="text-sm px-6 py-6 rounded-xl border-border/60"
           >
             Dashboard

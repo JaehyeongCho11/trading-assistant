@@ -72,6 +72,7 @@ export type Database = {
           survey_answers: Json | null
           trade_interval_minutes: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           auto_trade_enabled?: boolean
@@ -83,6 +84,7 @@ export type Database = {
           survey_answers?: Json | null
           trade_interval_minutes?: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           auto_trade_enabled?: boolean
@@ -94,6 +96,7 @@ export type Database = {
           survey_answers?: Json | null
           trade_interval_minutes?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }

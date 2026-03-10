@@ -6,12 +6,14 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import questionsData from "@/data/onboardingQuestions.json";
 
 type Answer = string | string[];
 
 const Onboarding = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [answers, setAnswers] = useState<Record<string, Answer>>({});
 
   const allQuestions = useMemo(() => questionsData.sections.flatMap((s) => s.questions), []);
@@ -45,8 +47,8 @@ const Onboarding = () => {
   const finishOnboarding = async () => {
     localStorage.setItem("tradingProfile", JSON.stringify(answers));
     await supabase.from("trading_profiles").upsert({
-      profile_key: "default", survey_answers: answers, auto_trade_enabled: true,
-    }, { onConflict: "profile_key" });
+      profile_key: "default", survey_answers: answers, auto_trade_enabled: true, user_id: user?.id,
+    } as any, { onConflict: "profile_key" });
     navigate("/chat");
   };
 
