@@ -16,6 +16,7 @@ const Profile = () => {
   const [autoTradeEnabled, setAutoTradeEnabled] = useState(true);
   const [maxTradeAmount, setMaxTradeAmount] = useState("1000");
   const [strategyPrompt, setStrategyPrompt] = useState("");
+  const [tradeInterval, setTradeInterval] = useState("5");
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, any>>({});
 
   useEffect(() => { loadProfile(); }, []);
