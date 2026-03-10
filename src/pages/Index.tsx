@@ -46,7 +46,7 @@ const Index = () => {
           className="flex flex-col sm:flex-row items-center gap-3 justify-center"
         >
           <Button
-            onClick={() => navigate("/onboarding")}
+            onClick={() => navigate("/auth")}
             size="lg"
             className="bg-primary text-primary-foreground hover:bg-primary/90 glow-primary text-sm font-semibold px-8 py-6 rounded-xl"
           >
