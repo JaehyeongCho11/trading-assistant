@@ -110,7 +110,7 @@ const TradeHistory = () => {
                   <div key={pos.symbol} className="px-3 py-2 rounded-lg bg-muted/30 border border-border/30">
                     <div className="flex items-center justify-between mb-0.5">
                       <span className="text-xs font-mono font-bold text-foreground">{pos.symbol}</span>
-                      <span className="text-[10px] text-muted-foreground">{pos.qty}주</span>
+                      <span className="text-[10px] text-muted-foreground">{pos.qty} shares</span>
                     </div>
                     <p className="text-[10px] text-muted-foreground font-mono">
                       ${parseFloat(pos.avg_entry_price).toFixed(2)} → ${parseFloat(pos.current_price).toFixed(2)}
