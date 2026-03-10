@@ -91,8 +91,8 @@ const Profile = () => {
                 <DollarSign className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">최대 거래 금액</p>
-                <p className="text-[11px] text-muted-foreground">1회 거래 최대 금액 (USD)</p>
+                <p className="text-sm font-semibold text-foreground">Max Trade Amount</p>
+                <p className="text-[11px] text-muted-foreground">Maximum amount per trade in USD</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
