@@ -162,6 +162,7 @@ async function executeTool(name: string, args: Record<string, unknown>) {
       };
       if (args.max_trade_amount !== undefined) updateData.max_trade_amount = args.max_trade_amount;
       if (args.auto_trade_enabled !== undefined) updateData.auto_trade_enabled = args.auto_trade_enabled;
+      if (args.trade_interval_minutes !== undefined) updateData.trade_interval_minutes = args.trade_interval_minutes;
       
       const { error } = await sb
         .from("trading_profiles")
