@@ -40,9 +40,9 @@ const Profile = () => {
       strategy_prompt: strategyPrompt,
     }).eq("profile_key", "default");
     if (error) {
-      toast({ variant: "destructive", title: "오류", description: "프로필 저장에 실패했습니다." });
+      toast({ variant: "destructive", title: "Error", description: "Failed to save profile." });
     } else {
-      toast({ title: "저장 완료", description: "프로필이 업데이트되었습니다." });
+      toast({ title: "Saved", description: "Profile updated successfully." });
     }
     setSaving(false);
   };
