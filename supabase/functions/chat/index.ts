@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { loadKnowledge } from "./knowledge.ts";
 
 const corsHeaders = {
@@ -89,6 +90,31 @@ const tools = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "update_profile",
+      description: "Update the user's trading profile when they express a change in strategy, risk tolerance, or trading preferences during conversation. Call this automatically when you detect the user wants to change their approach.",
+      parameters: {
+        type: "object",
+        properties: {
+          strategy_prompt: {
+            type: "string",
+            description: "Updated trading strategy description reflecting the user's new preferences",
+          },
+          max_trade_amount: {
+            type: "number",
+            description: "Updated maximum trade amount in USD if the user mentions changing it",
+          },
+          auto_trade_enabled: {
+            type: "boolean",
+            description: "Whether auto-trading should be enabled/disabled if user mentions it",
+          },
+        },
+        required: ["strategy_prompt"],
+      },
+    },
+  },
 ];
 
 async function executeTool(name: string, args: Record<string, unknown>) {
@@ -122,6 +148,25 @@ async function executeTool(name: string, args: Record<string, unknown>) {
           },
         }
       ).then((r) => r.json());
+    case "update_profile": {
+      const sb = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      );
+      const updateData: Record<string, unknown> = {
+        strategy_prompt: args.strategy_prompt,
+      };
+      if (args.max_trade_amount !== undefined) updateData.max_trade_amount = args.max_trade_amount;
+      if (args.auto_trade_enabled !== undefined) updateData.auto_trade_enabled = args.auto_trade_enabled;
+      
+      const { error } = await sb
+        .from("trading_profiles")
+        .update(updateData)
+        .eq("profile_key", "default");
+      
+      if (error) return { error: error.message };
+      return { success: true, updated: updateData };
+    }
     default:
       return { error: "Unknown tool" };
   }
@@ -211,6 +256,12 @@ You respond in English by default.
 - For market analysis, use available data and explain trends using your expertise
 - Provide actionable insights with clear reasoning based on technical and fundamental analysis
 - Always mention relevant risk factors and suggest appropriate position sizing
+
+## AUTOMATIC PROFILE UPDATES
+- When a user expresses a change in their trading strategy, risk tolerance, preferred sectors, or trading style during conversation, you MUST automatically call the update_profile tool.
+- Examples: "I want to be more aggressive", "Focus on tech stocks", "Increase max trade to $5000", "Try momentum trading", "Turn off auto-trading"
+- Combine the user's new preferences with existing context to create a comprehensive strategy_prompt.
+- Briefly inform the user that their profile has been updated.
 
 User's trading profile is stored and informs your recommendations.`;
 
