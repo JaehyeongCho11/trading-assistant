@@ -114,8 +114,8 @@ const Profile = () => {
                 <Brain className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">투자 전략</p>
-                <p className="text-[11px] text-muted-foreground">AI 트레이더에게 전달할 커스텀 지시사항</p>
+                <p className="text-sm font-semibold text-foreground">Trading Strategy</p>
+                <p className="text-[11px] text-muted-foreground">Custom instructions for the AI trader</p>
               </div>
             </div>
             <textarea
