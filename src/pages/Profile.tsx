@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Save, Zap, DollarSign, Brain, RefreshCw, User } from "lucide-react";
+import { ArrowLeft, Save, Zap, DollarSign, Brain, RefreshCw, User, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -16,6 +16,7 @@ const Profile = () => {
   const [autoTradeEnabled, setAutoTradeEnabled] = useState(true);
   const [maxTradeAmount, setMaxTradeAmount] = useState("1000");
   const [strategyPrompt, setStrategyPrompt] = useState("");
+  const [tradeInterval, setTradeInterval] = useState("5");
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, any>>({});
 
   useEffect(() => { loadProfile(); }, []);
@@ -27,6 +28,7 @@ const Profile = () => {
       setAutoTradeEnabled(data.auto_trade_enabled);
       setMaxTradeAmount(String(data.max_trade_amount || 1000));
       setStrategyPrompt(data.strategy_prompt || "");
+      setTradeInterval(String((data as any).trade_interval_minutes || 5));
       setSurveyAnswers((data.survey_answers as Record<string, any>) || {});
     }
     setLoading(false);
@@ -38,7 +40,8 @@ const Profile = () => {
       auto_trade_enabled: autoTradeEnabled,
       max_trade_amount: parseFloat(maxTradeAmount) || 1000,
       strategy_prompt: strategyPrompt,
-    }).eq("profile_key", "default");
+      trade_interval_minutes: parseInt(tradeInterval) || 5,
+    } as any).eq("profile_key", "default");
     if (error) {
       toast({ variant: "destructive", title: "Error", description: "Failed to save profile." });
     } else {
@@ -81,6 +84,43 @@ const Profile = () => {
                 <p className="text-[11px] text-muted-foreground">Enable AI-powered autonomous trading</p>
               </div>
               <Switch checked={autoTradeEnabled} onCheckedChange={setAutoTradeEnabled} />
+            </div>
+          </div>
+
+          {/* Trade Interval */}
+          <div className="bg-card border border-border/40 rounded-xl p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Clock className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Trading Interval</p>
+                <p className="text-[11px] text-muted-foreground">How often the AI analyzes and trades</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { value: "1", label: "1 min" },
+                { value: "5", label: "5 min" },
+                { value: "10", label: "10 min" },
+                { value: "15", label: "15 min" },
+                { value: "30", label: "30 min" },
+                { value: "60", label: "1 hr" },
+                { value: "120", label: "2 hr" },
+                { value: "240", label: "4 hr" },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setTradeInterval(opt.value)}
+                  className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                    tradeInterval === opt.value
+                      ? "bg-primary/15 text-primary border border-primary/25"
+                      : "bg-muted/40 text-muted-foreground hover:bg-muted/60 border border-transparent"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
           </div>
 

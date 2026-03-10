@@ -1,0 +1,1 @@
+ALTER TABLE public.trading_profiles ADD COLUMN trade_interval_minutes integer NOT NULL DEFAULT 5;

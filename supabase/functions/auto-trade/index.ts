@@ -67,6 +67,29 @@ serve(async (req) => {
       });
     }
 
+    // Check if enough time has passed since last trade based on interval setting
+    const intervalMinutes = profile.trade_interval_minutes || 5;
+    const { data: lastTrade } = await supabase
+      .from("trade_history")
+      .select("created_at")
+      .eq("profile_id", profile.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (lastTrade) {
+      const lastTradeTime = new Date(lastTrade.created_at).getTime();
+      const now = Date.now();
+      const elapsedMinutes = (now - lastTradeTime) / 60000;
+      if (elapsedMinutes < intervalMinutes) {
+        return new Response(JSON.stringify({
+          message: `Skipping — only ${elapsedMinutes.toFixed(1)} min since last trade (interval: ${intervalMinutes} min)`,
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
     // Get current account & positions
     const [account, positions] = await Promise.all([
       alpacaRequest("/v2/account"),

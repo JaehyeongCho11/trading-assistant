@@ -94,7 +94,7 @@ const tools = [
     type: "function",
     function: {
       name: "update_profile",
-      description: "Update the user's trading profile when they express a change in strategy, risk tolerance, or trading preferences during conversation. Call this automatically when you detect the user wants to change their approach.",
+      description: "Update the user's trading profile when they express a change in strategy, risk tolerance, trading preferences, or trading interval during conversation. Call this automatically when you detect the user wants to change their approach.",
       parameters: {
         type: "object",
         properties: {
@@ -109,6 +109,10 @@ const tools = [
           auto_trade_enabled: {
             type: "boolean",
             description: "Whether auto-trading should be enabled/disabled if user mentions it",
+          },
+          trade_interval_minutes: {
+            type: "number",
+            description: "Auto-trading interval in minutes (e.g., 1, 5, 10, 15, 30, 60). Update when user wants to change how frequently the AI trades.",
           },
         },
         required: ["strategy_prompt"],
@@ -158,6 +162,7 @@ async function executeTool(name: string, args: Record<string, unknown>) {
       };
       if (args.max_trade_amount !== undefined) updateData.max_trade_amount = args.max_trade_amount;
       if (args.auto_trade_enabled !== undefined) updateData.auto_trade_enabled = args.auto_trade_enabled;
+      if (args.trade_interval_minutes !== undefined) updateData.trade_interval_minutes = args.trade_interval_minutes;
       
       const { error } = await sb
         .from("trading_profiles")
@@ -259,8 +264,9 @@ You respond in English by default.
 
 ## AUTOMATIC PROFILE UPDATES
 - When a user expresses a change in their trading strategy, risk tolerance, preferred sectors, or trading style during conversation, you MUST automatically call the update_profile tool.
-- Examples: "I want to be more aggressive", "Focus on tech stocks", "Increase max trade to $5000", "Try momentum trading", "Turn off auto-trading"
+- Examples: "I want to be more aggressive", "Focus on tech stocks", "Increase max trade to $5000", "Try momentum trading", "Turn off auto-trading", "Trade every 10 minutes", "Change interval to 30 minutes"
 - Combine the user's new preferences with existing context to create a comprehensive strategy_prompt.
+- When user mentions trading frequency/interval, update trade_interval_minutes accordingly.
 - Briefly inform the user that their profile has been updated.
 
 User's trading profile is stored and informs your recommendations.`;
