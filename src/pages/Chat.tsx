@@ -288,7 +288,7 @@ const Chat = () => {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="메시지를 입력하세요..."
+            placeholder="Type a message..."
             className="bg-muted/40 border-border/40 h-11 rounded-xl text-sm"
             disabled={isLoading}
           />

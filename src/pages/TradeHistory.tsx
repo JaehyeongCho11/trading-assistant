@@ -190,7 +190,7 @@ const TradeHistory = () => {
                     )}
                   </div>
                   <span className="text-[10px] text-muted-foreground font-mono">
-                    {new Date(t.created_at).toLocaleDateString("ko-KR", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    {new Date(t.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
                 {t.side !== "hold" && (

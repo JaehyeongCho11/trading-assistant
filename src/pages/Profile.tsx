@@ -157,7 +157,7 @@ const Profile = () => {
 
           {/* Save Button */}
           <Button onClick={saveProfile} disabled={saving} className="w-full h-11 rounded-xl font-semibold">
-            {saving ? "저장 중..." : "변경사항 저장"}
+            {saving ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </ScrollArea>

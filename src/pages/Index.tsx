@@ -72,9 +72,9 @@ const Index = () => {
           className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4"
         >
           {[
-            { icon: TrendingUp, label: "자동 매매", desc: "AI 기반 실시간 트레이딩" },
-            { icon: Bot, label: "AI 분석", desc: "시장 데이터 실시간 분석" },
-            { icon: Shield, label: "안전한 거래", desc: "모의투자로 리스크 제로" },
+            { icon: TrendingUp, label: "Auto Trading", desc: "AI-powered real-time trading" },
+            { icon: Bot, label: "AI Analysis", desc: "Real-time market data analysis" },
+            { icon: Shield, label: "Safe Trading", desc: "Zero risk with paper trading" },
           ].map(({ icon: Icon, label, desc }) => (
             <div key={label} className="glass rounded-xl p-5 text-center hover:border-primary/20 transition-colors">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3">
