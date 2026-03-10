@@ -21,7 +21,7 @@ const Profile = () => {
   const [tradeInterval, setTradeInterval] = useState("5");
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, any>>({});
 
-  useEffect(() => { loadProfile(); }, []);
+  useEffect(() => { loadProfile(); }, [user]);
 
   const loadProfile = async () => {
     if (!user) return;
